@@ -9,6 +9,8 @@ const expiresInEl = document.getElementById("expiresIn");
 const passwordOptionEl = document.getElementById("passwordOption");
 const passwordWrapEl = document.getElementById("passwordFieldWrap");
 const passwordEl = document.getElementById("password");
+const passwordToggleBtn = document.getElementById("passwordToggleBtn");
+const passwordToggleIcon = document.getElementById("passwordToggleIcon");
 const charCountEl = document.getElementById("charCount");
 const submitBtn = document.getElementById("submitBtn");
 const resetBtn = document.getElementById("resetBtn");
@@ -16,8 +18,10 @@ const resultEmpty = document.getElementById("resultEmpty");
 const resultSuccess = document.getElementById("resultSuccess");
 const generatedLinkEl = document.getElementById("generatedLink");
 const copyLinkBtn = document.getElementById("copyLinkBtn");
+const openLinkBtn = document.getElementById("openLinkBtn");
 
 const THEME_KEY = "encnote-theme";
+let currentGeneratedLink = "";
 
 const toast = Swal.mixin({
   toast: true,
@@ -50,28 +54,41 @@ function initTheme() {
   applyTheme(prefersDark ? "dark" : "light");
 }
 
-function togglePasswordField() {
-  const enabled = passwordOptionEl.checked;
-  passwordWrapEl.classList.toggle("hidden", !enabled);
-  if (!enabled) {
-    passwordEl.value = "";
-  }
-}
-
 function updateCount() {
   charCountEl.textContent = `${messageEl.value.length} / 5000`;
 }
 
+function togglePasswordField() {
+  const enabled = passwordOptionEl.checked;
+  passwordWrapEl.classList.toggle("hidden", !enabled);
+
+  if (!enabled) {
+    passwordEl.value = "";
+    passwordEl.type = "password";
+    passwordToggleIcon.className = "fa-regular fa-eye";
+    passwordToggleBtn.setAttribute("aria-label", "Show password");
+  }
+}
+
+function togglePasswordVisibility() {
+  const isHidden = passwordEl.type === "password";
+  passwordEl.type = isHidden ? "text" : "password";
+  passwordToggleIcon.className = isHidden ? "fa-regular fa-eye-slash" : "fa-regular fa-eye";
+  passwordToggleBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+}
+
 function showResult(link) {
+  currentGeneratedLink = link;
   generatedLinkEl.textContent = link;
   resultEmpty.classList.add("hidden");
   resultSuccess.classList.remove("hidden");
 }
 
 function resetResult() {
+  currentGeneratedLink = "";
+  generatedLinkEl.textContent = "";
   resultEmpty.classList.remove("hidden");
   resultSuccess.classList.add("hidden");
-  generatedLinkEl.textContent = "";
 }
 
 function getExpiryMinutes(value) {
@@ -93,6 +110,7 @@ themeToggle.addEventListener("click", () => {
 });
 
 passwordOptionEl.addEventListener("change", togglePasswordField);
+passwordToggleBtn.addEventListener("click", togglePasswordVisibility);
 messageEl.addEventListener("input", updateCount);
 
 resetBtn.addEventListener("click", () => {
@@ -107,11 +125,10 @@ resetBtn.addEventListener("click", () => {
 });
 
 copyLinkBtn.addEventListener("click", async () => {
-  const link = generatedLinkEl.textContent.trim();
-  if (!link) return;
+  if (!currentGeneratedLink) return;
 
   try {
-    await navigator.clipboard.writeText(link);
+    await navigator.clipboard.writeText(currentGeneratedLink);
     toast.fire({
       icon: "success",
       title: "Link copied"
@@ -124,6 +141,11 @@ copyLinkBtn.addEventListener("click", async () => {
   }
 });
 
+openLinkBtn.addEventListener("click", () => {
+  if (!currentGeneratedLink) return;
+  window.open(currentGeneratedLink, "_blank", "noopener,noreferrer");
+});
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -133,28 +155,19 @@ form.addEventListener("submit", async (event) => {
   const password = passwordEl.value.trim();
 
   if (!message) {
-    toast.fire({
-      icon: "warning",
-      title: "Write a secret message first"
-    });
+    toast.fire({ icon: "warning", title: "Write a secret message first" });
     messageEl.focus();
     return;
   }
 
   if (message.length < 5) {
-    toast.fire({
-      icon: "warning",
-      title: "Message is too short"
-    });
+    toast.fire({ icon: "warning", title: "Message is too short" });
     messageEl.focus();
     return;
   }
 
   if (passwordEnabled && password.length < 4) {
-    toast.fire({
-      icon: "warning",
-      title: "Password must be at least 4 characters"
-    });
+    toast.fire({ icon: "warning", title: "Password must be at least 4 characters" });
     passwordEl.focus();
     return;
   }
@@ -162,7 +175,8 @@ form.addEventListener("submit", async (event) => {
   const durationMinutes = getExpiryMinutes(expiresIn);
 
   submitBtn.disabled = true;
-  submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><span>Creating...</span>';
+  submitBtn.innerHTML =
+    '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><span>Creating...</span>';
 
   try {
     const response = await fetch("/api/notes", {
