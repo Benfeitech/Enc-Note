@@ -26,7 +26,6 @@
         <span class="brand-mark">EN</span>
         <span class="brand-text">
           <strong>Enc Note</strong>
-          <small>Secret messages with one-time access</small>
         </span>
       </a>
 
@@ -37,42 +36,32 @@
     </header>
 
     <main class="page-shell">
+      <nav class="social-strip" aria-label="Follow our handles">
+        <a href="https://youtube.com/" target="_blank" rel="noreferrer" aria-label="YouTube">
+          <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+        </a>
+        <a href="https://wa.me/" target="_blank" rel="noreferrer" aria-label="WhatsApp">
+          <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+        </a>
+        <a href="https://t.me/" target="_blank" rel="noreferrer" aria-label="Telegram">
+          <i class="fa-brands fa-telegram" aria-hidden="true"></i>
+        </a>
+        <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub">
+          <i class="fa-brands fa-github" aria-hidden="true"></i>
+        </a>
+        <a href="https://linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+          <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+        </a>
+      </nav>
+
       <section class="hero-card">
-        <div class="hero-badge">Blue • Green • White • Gradient</div>
         <h1>Create secret messages that disappear after reading.</h1>
         <p class="hero-copy">
-          Enc Note is built for private sharing. Add a password, set an expiry time,
-          generate a unique link, and let the message burn after the first open.
+          Add a password, set an expiry time, generate a unique link, and let the message burn after the first open.
         </p>
-
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#create">Create a secret note</a>
-          <a class="btn btn-secondary" href="#follow">Follow our handles</a>
-        </div>
-
-        <div class="hero-preview">
-          <div class="preview-card">
-            <span class="preview-label">Example</span>
-            <h2>“Meet me at 7 PM. The passcode is 4821.”</h2>
-            <div class="preview-meta">
-              <span>Password protected</span>
-              <span>Expires in 10 min</span>
-              <span>Open once</span>
-            </div>
-          </div>
-        </div>
       </section>
 
       <section class="create-section" id="create">
-        <div class="section-heading">
-          <p class="eyebrow">Create note</p>
-          <h2>Write your secret message</h2>
-          <p>
-            The form below prepares your secret note, validates your input, and sends it
-            to the secure server route.
-          </p>
-        </div>
-
         <div class="create-grid">
           <form class="form-card" id="createNoteForm">
             <div class="field">
@@ -115,7 +104,8 @@
 
             <div class="field password-field hidden" id="passwordFieldWrap">
               <label for="password">Password</label>
-              <div class="input-with-icon">
+
+              <div class="input-with-icon password-input">
                 <i class="fa-solid fa-lock" aria-hidden="true"></i>
                 <input
                   type="password"
@@ -124,8 +114,17 @@
                   placeholder="Enter a strong password"
                   autocomplete="new-password"
                 />
+                <button
+                  class="password-toggle-btn"
+                  id="passwordToggleBtn"
+                  type="button"
+                  aria-label="Show password"
+                >
+                  <i class="fa-regular fa-eye" id="passwordToggleIcon" aria-hidden="true"></i>
+                </button>
               </div>
-              <small>Leave this off if you want the link to open without a password.</small>
+
+              <small>Use the eye icon to review the password before creating the link.</small>
             </div>
 
             <div class="form-actions">
@@ -142,7 +141,7 @@
 
           <aside class="status-card">
             <div class="status-head">
-              <p class="eyebrow">Live output</p>
+              <p class="eyebrow">Link output</p>
               <h3>Ready to generate</h3>
             </div>
 
@@ -156,10 +155,15 @@
                 <div class="result-check">
                   <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                 </div>
+
                 <p class="result-title">Secret link created</p>
                 <p class="result-link" id="generatedLink"></p>
 
                 <div class="result-actions">
+                  <button class="btn btn-secondary" type="button" id="openLinkBtn">
+                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                    <span>Open link</span>
+                  </button>
                   <button class="btn btn-primary" type="button" id="copyLinkBtn">
                     <i class="fa-solid fa-copy" aria-hidden="true"></i>
                     <span>Copy link</span>
@@ -167,112 +171,7 @@
                 </div>
               </div>
             </div>
-
-            <div class="mini-notes">
-              <article>
-                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-                <div>
-                  <strong>Encrypted storage</strong>
-                  <p>Message data is prepared for encrypted saving on the server.</p>
-                </div>
-              </article>
-              <article>
-                <i class="fa-solid fa-bolt" aria-hidden="true"></i>
-                <div>
-                  <strong>Fast feedback</strong>
-                  <p>Toast alerts keep the flow smooth and clear for the user.</p>
-                </div>
-              </article>
-            </div>
           </aside>
-        </div>
-      </section>
-
-      <section class="section-grid" id="features">
-        <article class="info-card">
-          <div class="info-icon">
-            <i class="fa-solid fa-lock" aria-hidden="true"></i>
-          </div>
-          <h3>Password protection</h3>
-          <p>Protect sensitive messages with a password before the link is shared.</p>
-        </article>
-
-        <article class="info-card">
-          <div class="info-icon">
-            <i class="fa-regular fa-clock" aria-hidden="true"></i>
-          </div>
-          <h3>Expiry control</h3>
-          <p>Set a time limit so the secret becomes unavailable after the deadline.</p>
-        </article>
-
-        <article class="info-card">
-          <div class="info-icon">
-            <i class="fa-solid fa-fire" aria-hidden="true"></i>
-          </div>
-          <h3>Burn after reading</h3>
-          <p>The note is made for one-time reading and is removed after opening.</p>
-        </article>
-      </section>
-
-      <section class="follow-section" id="follow">
-        <div class="section-heading">
-          <p class="eyebrow">Stay connected</p>
-          <h2>Follow our handles</h2>
-          <p>
-            Keep up with updates, feature drops, and project progress across our channels.
-          </p>
-        </div>
-
-        <div class="social-grid">
-          <a class="social-card" href="https://youtube.com/" target="_blank" rel="noreferrer">
-            <span class="social-icon">
-              <i class="fa-brands fa-youtube" aria-hidden="true"></i>
-            </span>
-            <span>
-              <strong>YouTube</strong>
-              <small>Videos and walkthroughs</small>
-            </span>
-          </a>
-
-          <a class="social-card" href="https://wa.me/" target="_blank" rel="noreferrer">
-            <span class="social-icon">
-              <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-            </span>
-            <span>
-              <strong>WhatsApp</strong>
-              <small>Direct announcements</small>
-            </span>
-          </a>
-
-          <a class="social-card" href="https://t.me/" target="_blank" rel="noreferrer">
-            <span class="social-icon">
-              <i class="fa-brands fa-telegram" aria-hidden="true"></i>
-            </span>
-            <span>
-              <strong>Telegram</strong>
-              <small>Updates and community</small>
-            </span>
-          </a>
-
-          <a class="social-card" href="https://github.com/" target="_blank" rel="noreferrer">
-            <span class="social-icon">
-              <i class="fa-brands fa-github" aria-hidden="true"></i>
-            </span>
-            <span>
-              <strong>GitHub</strong>
-              <small>Source code and repo</small>
-            </span>
-          </a>
-
-          <a class="social-card" href="https://linkedin.com/" target="_blank" rel="noreferrer">
-            <span class="social-icon">
-              <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
-            </span>
-            <span>
-              <strong>LinkedIn</strong>
-              <small>Professional updates</small>
-            </span>
-          </a>
         </div>
       </section>
     </main>
