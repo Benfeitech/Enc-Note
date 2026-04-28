@@ -9,7 +9,7 @@
       content="Read a secret Enc Note message once before it burns."
     />
 
-    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/read.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -26,17 +26,37 @@
         <span class="brand-mark">EN</span>
         <span class="brand-text">
           <strong>Enc Note</strong>
-          <small>Secret messages with one-time access</small>
+          <small>Secure one-time secret messages</small>
         </span>
       </a>
 
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme">
+      <button class="theme-toggle theme-toggle-icon-only" id="themeToggle" type="button" aria-label="Toggle theme">
         <i class="fa-solid fa-moon theme-toggle-icon" id="themeIcon" aria-hidden="true"></i>
-        <span class="theme-toggle-text" id="themeText">Dark mode</span>
       </button>
     </header>
 
     <main class="page-shell">
+      <section class="follow-wrap">
+        <p class="follow-title">Follow our social handle</p>
+        <nav class="social-strip" aria-label="Follow our social handle">
+          <a href="https://youtube.com/" target="_blank" rel="noreferrer" aria-label="YouTube">
+            <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+          </a>
+          <a href="https://wa.me/" target="_blank" rel="noreferrer" aria-label="WhatsApp">
+            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+          </a>
+          <a href="https://t.me/" target="_blank" rel="noreferrer" aria-label="Telegram">
+            <i class="fa-brands fa-telegram" aria-hidden="true"></i>
+          </a>
+          <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub">
+            <i class="fa-brands fa-github" aria-hidden="true"></i>
+          </a>
+          <a href="https://linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+            <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+          </a>
+        </nav>
+      </section>
+
       <section class="read-hero">
         <div class="read-card">
           <div class="read-topline">
@@ -50,14 +70,22 @@
           </p>
 
           <div class="meta-row" id="metaRow">
-            <span><i class="fa-regular fa-clock" aria-hidden="true"></i> <strong>Expiry:</strong> <span id="expiresAtText">—</span></span>
-            <span><i class="fa-solid fa-lock" aria-hidden="true"></i> <strong>Protected:</strong> <span id="passwordStateText">—</span></span>
+            <span>
+              <i class="fa-regular fa-clock" aria-hidden="true"></i>
+              <strong>Expiry:</strong>
+              <span id="expiresAtText">—</span>
+            </span>
+            <span>
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              <strong>Protected:</strong>
+              <span id="passwordStateText">—</span>
+            </span>
           </div>
 
           <form class="read-form" id="readForm">
             <div class="field hidden" id="passwordWrap">
               <label for="readPassword">Password</label>
-              <div class="input-with-icon">
+              <div class="input-with-icon password-input">
                 <i class="fa-solid fa-key" aria-hidden="true"></i>
                 <input
                   type="password"
@@ -66,6 +94,14 @@
                   placeholder="Enter the password"
                   autocomplete="current-password"
                 />
+                <button
+                  class="password-toggle-btn"
+                  id="readPasswordToggleBtn"
+                  type="button"
+                  aria-label="Show password"
+                >
+                  <i class="fa-regular fa-eye" id="readPasswordToggleIcon" aria-hidden="true"></i>
+                </button>
               </div>
             </div>
 
@@ -85,7 +121,7 @@
             <div class="read-output-head">
               <div class="read-badge">
                 <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-                <span>Message opened and burned</span>
+                <span>This is the message you opened</span>
               </div>
             </div>
 
@@ -96,6 +132,13 @@
             <p class="post-note">
               The message has been marked as opened and will no longer be accessible.
             </p>
+
+            <div class="opened-actions">
+              <a class="btn btn-secondary" href="/index.html#create">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <span>Create your own secret message</span>
+              </a>
+            </div>
           </div>
 
           <div class="read-warning" id="readWarning">
