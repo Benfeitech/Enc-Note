@@ -1,7 +1,6 @@
 const root = document.documentElement;
 const themeToggle = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
-const themeText = document.getElementById("themeText");
 
 const form = document.getElementById("createNoteForm");
 const messageEl = document.getElementById("message");
@@ -39,8 +38,7 @@ function applyTheme(theme) {
   themeIcon.className = isDark
     ? "fa-solid fa-sun theme-toggle-icon"
     : "fa-solid fa-moon theme-toggle-icon";
-  themeText.textContent = isDark ? "Light mode" : "Dark mode";
-  themeToggle.setAttribute("aria-pressed", String(isDark));
+  themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
 }
 
 function initTheme() {
@@ -118,10 +116,7 @@ resetBtn.addEventListener("click", () => {
   togglePasswordField();
   updateCount();
   resetResult();
-  toast.fire({
-    icon: "info",
-    title: "Form reset"
-  });
+  toast.fire({ icon: "info", title: "Form reset" });
 });
 
 copyLinkBtn.addEventListener("click", async () => {
@@ -129,15 +124,9 @@ copyLinkBtn.addEventListener("click", async () => {
 
   try {
     await navigator.clipboard.writeText(currentGeneratedLink);
-    toast.fire({
-      icon: "success",
-      title: "Link copied"
-    });
+    toast.fire({ icon: "success", title: "Link copied" });
   } catch {
-    toast.fire({
-      icon: "error",
-      title: "Could not copy link"
-    });
+    toast.fire({ icon: "error", title: "Could not copy link" });
   }
 });
 
@@ -181,9 +170,7 @@ form.addEventListener("submit", async (event) => {
   try {
     const response = await fetch("/api/notes", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         message,
         password: passwordEnabled ? password : "",
@@ -201,10 +188,7 @@ form.addEventListener("submit", async (event) => {
     const link = data.link || `${window.location.origin}/read.html?slug=${data.slug}`;
     showResult(link);
 
-    toast.fire({
-      icon: "success",
-      title: "Secret link created"
-    });
+    toast.fire({ icon: "success", title: "Secret link created" });
 
     form.reset();
     togglePasswordField();
