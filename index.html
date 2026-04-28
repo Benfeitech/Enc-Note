@@ -15,6 +15,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
       referrerpolicy="no-referrer"
     />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body>
     <div class="bg-glow bg-glow-1"></div>
@@ -45,13 +46,13 @@
         </p>
 
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#follow">Follow our handles</a>
-          <a class="btn btn-secondary" href="#features">See features</a>
+          <a class="btn btn-primary" href="#create">Create a secret note</a>
+          <a class="btn btn-secondary" href="#follow">Follow our handles</a>
         </div>
 
         <div class="hero-preview">
           <div class="preview-card">
-            <span class="preview-label">Message</span>
+            <span class="preview-label">Example</span>
             <h2>“Meet me at 7 PM. The passcode is 4821.”</h2>
             <div class="preview-meta">
               <span>Password protected</span>
@@ -59,6 +60,131 @@
               <span>Open once</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section class="create-section" id="create">
+        <div class="section-heading">
+          <p class="eyebrow">Create note</p>
+          <h2>Write your secret message</h2>
+          <p>
+            The form below prepares your secret note, validates your input, and sends it
+            to the secure server route.
+          </p>
+        </div>
+
+        <div class="create-grid">
+          <form class="form-card" id="createNoteForm">
+            <div class="field">
+              <label for="message">Secret message</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="7"
+                maxlength="5000"
+                placeholder="Write your secret message here..."
+                required
+              ></textarea>
+              <div class="field-meta">
+                <span>Keep it clear and private.</span>
+                <span id="charCount">0 / 5000</span>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="expiresIn">Expiry time</label>
+                <select id="expiresIn" name="expiresIn" required>
+                  <option value="5m">5 minutes</option>
+                  <option value="15m">15 minutes</option>
+                  <option value="1h" selected>1 hour</option>
+                  <option value="6h">6 hours</option>
+                  <option value="24h">24 hours</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="passwordOption">Password protection</label>
+                <label class="switch-wrap" for="passwordOption">
+                  <input type="checkbox" id="passwordOption" />
+                  <span class="switch-ui"></span>
+                  <span class="switch-text">Require a password</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="field password-field hidden" id="passwordFieldWrap">
+              <label for="password">Password</label>
+              <div class="input-with-icon">
+                <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Enter a strong password"
+                  autocomplete="new-password"
+                />
+              </div>
+              <small>Leave this off if you want the link to open without a password.</small>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit" id="submitBtn">
+                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                <span>Create secure link</span>
+              </button>
+              <button class="btn btn-secondary" type="button" id="resetBtn">
+                <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+                <span>Reset</span>
+              </button>
+            </div>
+          </form>
+
+          <aside class="status-card">
+            <div class="status-head">
+              <p class="eyebrow">Live output</p>
+              <h3>Ready to generate</h3>
+            </div>
+
+            <div class="result-box" id="resultBox">
+              <div class="result-empty" id="resultEmpty">
+                <i class="fa-regular fa-paper-plane" aria-hidden="true"></i>
+                <p>Your unique link will appear here after creation.</p>
+              </div>
+
+              <div class="result-success hidden" id="resultSuccess">
+                <div class="result-check">
+                  <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                </div>
+                <p class="result-title">Secret link created</p>
+                <p class="result-link" id="generatedLink"></p>
+
+                <div class="result-actions">
+                  <button class="btn btn-primary" type="button" id="copyLinkBtn">
+                    <i class="fa-solid fa-copy" aria-hidden="true"></i>
+                    <span>Copy link</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="mini-notes">
+              <article>
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                <div>
+                  <strong>Encrypted storage</strong>
+                  <p>Message data is prepared for encrypted saving on the server.</p>
+                </div>
+              </article>
+              <article>
+                <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+                <div>
+                  <strong>Fast feedback</strong>
+                  <p>Toast alerts keep the flow smooth and clear for the user.</p>
+                </div>
+              </article>
+            </div>
+          </aside>
         </div>
       </section>
 
