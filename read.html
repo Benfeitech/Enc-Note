@@ -36,27 +36,8 @@
     </header>
 
     <main class="page-shell">
-      <section class="follow-wrap">
-        <p class="follow-title">Follow our social handle</p>
-        <nav class="social-strip" aria-label="Follow our social handle">
-          <a href="https://youtube.com/" target="_blank" rel="noreferrer" aria-label="YouTube">
-            <i class="fa-brands fa-youtube" aria-hidden="true"></i>
-          </a>
-          <a href="https://wa.me/" target="_blank" rel="noreferrer" aria-label="WhatsApp">
-            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-          </a>
-          <a href="https://t.me/" target="_blank" rel="noreferrer" aria-label="Telegram">
-            <i class="fa-brands fa-telegram" aria-hidden="true"></i>
-          </a>
-          <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub">
-            <i class="fa-brands fa-github" aria-hidden="true"></i>
-          </a>
-          <a href="https://linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
-            <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
-          </a>
-        </nav>
-      </section>
 
+      <!-- READ SECTION (UNCHANGED) -->
       <section class="read-hero">
         <div class="read-card">
           <div class="read-topline">
@@ -71,12 +52,12 @@
 
           <div class="meta-row" id="metaRow">
             <span>
-              <i class="fa-regular fa-clock" aria-hidden="true"></i>
+              <i class="fa-regular fa-clock"></i>
               <strong>Expiry:</strong>
               <span id="expiresAtText">—</span>
             </span>
             <span>
-              <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              <i class="fa-solid fa-lock"></i>
               <strong>Protected:</strong>
               <span id="passwordStateText">—</span>
             </span>
@@ -86,32 +67,31 @@
             <div class="field hidden" id="passwordWrap">
               <label for="readPassword">Password</label>
               <div class="input-with-icon password-input">
-                <i class="fa-solid fa-key" aria-hidden="true"></i>
+                <i class="fa-solid fa-key"></i>
                 <input
                   type="password"
                   id="readPassword"
                   name="readPassword"
                   placeholder="Enter the password"
-                  autocomplete="current-password"
                 />
                 <button
                   class="password-toggle-btn"
                   id="readPasswordToggleBtn"
                   type="button"
-                  aria-label="Show password"
                 >
-                  <i class="fa-regular fa-eye" id="readPasswordToggleIcon" aria-hidden="true"></i>
+                  <i class="fa-regular fa-eye" id="readPasswordToggleIcon"></i>
                 </button>
               </div>
             </div>
 
             <div class="form-actions">
               <button class="btn btn-primary" type="submit" id="readBtn">
-                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                <i class="fa-solid fa-eye"></i>
                 <span>Open message</span>
               </button>
+
               <a class="btn btn-secondary" href="/index.html#create">
-                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <i class="fa-solid fa-plus"></i>
                 <span>Create your own secret message</span>
               </a>
             </div>
@@ -120,7 +100,7 @@
           <div class="read-output hidden" id="readOutput">
             <div class="read-output-head">
               <div class="read-badge">
-                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                <i class="fa-solid fa-circle-check"></i>
                 <span>This is the message you opened</span>
               </div>
             </div>
@@ -135,20 +115,44 @@
 
             <div class="opened-actions">
               <a class="btn btn-secondary" href="/index.html#create">
-                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <i class="fa-solid fa-plus"></i>
                 <span>Create your own secret message</span>
               </a>
             </div>
           </div>
 
           <div class="read-warning" id="readWarning">
-            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            <i class="fa-solid fa-shield-halved"></i>
             <p>
               After successful opening, the note is burned. Use the password carefully if the sender enabled one.
             </p>
           </div>
         </div>
       </section>
+
+      <!-- ✅ MOVED FOLLOW SECTION HERE -->
+      <section class="follow-wrap">
+        <p class="follow-title">Follow our social handles</p>
+
+        <nav class="social-strip">
+          <a href="https://youtube.com/" target="_blank">
+            <i class="fa-brands fa-youtube"></i>
+          </a>
+          <a href="https://wa.me/" target="_blank">
+            <i class="fa-brands fa-whatsapp"></i>
+          </a>
+          <a href="https://t.me/" target="_blank">
+            <i class="fa-brands fa-telegram"></i>
+          </a>
+          <a href="https://github.com/" target="_blank">
+            <i class="fa-brands fa-github"></i>
+          </a>
+          <a href="https://linkedin.com/" target="_blank">
+            <i class="fa-brands fa-linkedin-in"></i>
+          </a>
+        </nav>
+      </section>
+
     </main>
 
     <footer class="site-footer">
