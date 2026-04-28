@@ -15,6 +15,10 @@ const statusChip = document.getElementById("statusChip");
 const expiresAtText = document.getElementById("expiresAtText");
 const passwordStateText = document.getElementById("passwordStateText");
 
+// NEW (safe additions)
+const readPasswordToggleBtn = document.getElementById("readPasswordToggleBtn");
+const readPasswordToggleIcon = document.getElementById("readPasswordToggleIcon");
+
 const THEME_KEY = "encnote-theme";
 const slug = new URLSearchParams(window.location.search).get("slug") || "";
 
@@ -31,10 +35,16 @@ const toast = Swal.mixin({
 function applyTheme(theme) {
   root.setAttribute("data-theme", theme);
   const isDark = theme === "dark";
+
   themeIcon.className = isDark
     ? "fa-solid fa-sun theme-toggle-icon"
     : "fa-solid fa-moon theme-toggle-icon";
-  themeText.textContent = isDark ? "Light mode" : "Dark mode";
+
+  // SAFE: only update text if it exists
+  if (themeText) {
+    themeText.textContent = isDark ? "Light mode" : "Dark mode";
+  }
+
   themeToggle.setAttribute("aria-pressed", String(isDark));
 }
 
@@ -75,7 +85,14 @@ function showBurnedMessage(message) {
   messageText.textContent = message;
   readOutput.classList.remove("hidden");
   readWarning.classList.add("hidden");
-  readForm.classList.add("hidden");
+
+  // ✅ FIX: don't hide form, just disable inputs (keeps "create your own message" button visible)
+  readForm.querySelectorAll("input, button").forEach((el) => {
+    if (el.id !== "readPasswordToggleBtn") {
+      el.disabled = true;
+    }
+  });
+
   statusChip.textContent = "Burned";
 }
 
@@ -191,6 +208,21 @@ readForm.addEventListener("submit", async (event) => {
     setLoading(false);
   }
 });
+
+/* =========================
+   PASSWORD TOGGLE (NEW)
+========================= */
+function toggleReadPasswordVisibility() {
+  const isHidden = readPassword.type === "password";
+  readPassword.type = isHidden ? "text" : "password";
+  readPasswordToggleIcon.className = isHidden
+    ? "fa-regular fa-eye-slash"
+    : "fa-regular fa-eye";
+}
+
+if (readPasswordToggleBtn) {
+  readPasswordToggleBtn.addEventListener("click", toggleReadPasswordVisibility);
+}
 
 initTheme();
 loadNoteStatus();
