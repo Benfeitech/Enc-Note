@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enc Note — Secret Messages That Burn Once Read</title>
+    <meta
+      name="description"
+      content="Enc Note lets you create secret messages with optional passwords, expiry time, and one-time reading."
+    />
+
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Enc Note home">
+        <span class="brand-mark">EN</span>
+        <span class="brand-text">
+          <strong>Enc Note</strong>
+          <small>Secret messages with one-time access</small>
+        </span>
+      </a>
+
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme">
+        <i class="fa-solid fa-moon theme-toggle-icon" id="themeIcon" aria-hidden="true"></i>
+        <span class="theme-toggle-text" id="themeText">Dark mode</span>
+      </button>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero-card">
+        <div class="hero-badge">Blue • Green • White • Gradient</div>
+        <h1>Create secret messages that disappear after reading.</h1>
+        <p class="hero-copy">
+          Enc Note is built for private sharing. Add a password, set an expiry time,
+          generate a unique link, and let the message burn after the first open.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#follow">Follow our handles</a>
+          <a class="btn btn-secondary" href="#features">See features</a>
+        </div>
+
+        <div class="hero-preview">
+          <div class="preview-card">
+            <span class="preview-label">Message</span>
+            <h2>“Meet me at 7 PM. The passcode is 4821.”</h2>
+            <div class="preview-meta">
+              <span>Password protected</span>
+              <span>Expires in 10 min</span>
+              <span>Open once</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-grid" id="features">
+        <article class="info-card">
+          <div class="info-icon">
+            <i class="fa-solid fa-lock" aria-hidden="true"></i>
+          </div>
+          <h3>Password protection</h3>
+          <p>Protect sensitive messages with a password before the link is shared.</p>
+        </article>
+
+        <article class="info-card">
+          <div class="info-icon">
+            <i class="fa-regular fa-clock" aria-hidden="true"></i>
+          </div>
+          <h3>Expiry control</h3>
+          <p>Set a time limit so the secret becomes unavailable after the deadline.</p>
+        </article>
+
+        <article class="info-card">
+          <div class="info-icon">
+            <i class="fa-solid fa-fire" aria-hidden="true"></i>
+          </div>
+          <h3>Burn after reading</h3>
+          <p>The note is made for one-time reading and is removed after opening.</p>
+        </article>
+      </section>
+
+      <section class="follow-section" id="follow">
+        <div class="section-heading">
+          <p class="eyebrow">Stay connected</p>
+          <h2>Follow our handles</h2>
+          <p>
+            Keep up with updates, feature drops, and project progress across our channels.
+          </p>
+        </div>
+
+        <div class="social-grid">
+          <a class="social-card" href="https://youtube.com/" target="_blank" rel="noreferrer">
+            <span class="social-icon">
+              <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+            </span>
+            <span>
+              <strong>YouTube</strong>
+              <small>Videos and walkthroughs</small>
+            </span>
+          </a>
+
+          <a class="social-card" href="https://wa.me/" target="_blank" rel="noreferrer">
+            <span class="social-icon">
+              <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+            </span>
+            <span>
+              <strong>WhatsApp</strong>
+              <small>Direct announcements</small>
+            </span>
+          </a>
+
+          <a class="social-card" href="https://t.me/" target="_blank" rel="noreferrer">
+            <span class="social-icon">
+              <i class="fa-brands fa-telegram" aria-hidden="true"></i>
+            </span>
+            <span>
+              <strong>Telegram</strong>
+              <small>Updates and community</small>
+            </span>
+          </a>
+
+          <a class="social-card" href="https://github.com/" target="_blank" rel="noreferrer">
+            <span class="social-icon">
+              <i class="fa-brands fa-github" aria-hidden="true"></i>
+            </span>
+            <span>
+              <strong>GitHub</strong>
+              <small>Source code and repo</small>
+            </span>
+          </a>
+
+          <a class="social-card" href="https://linkedin.com/" target="_blank" rel="noreferrer">
+            <span class="social-icon">
+              <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+            </span>
+            <span>
+              <strong>LinkedIn</strong>
+              <small>Professional updates</small>
+            </span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Powered by <strong>Benfei Tech</strong></p>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>
