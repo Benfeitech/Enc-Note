@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enc Note — Page Not Found</title>
+    <meta name="description" content="Enc Note page not found or unavailable." />
+
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Enc Note home">
+        <span class="brand-mark">EN</span>
+        <span class="brand-text">
+          <strong>Enc Note</strong>
+          <small>Secret messages with one-time access</small>
+        </span>
+      </a>
+
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme">
+        <i class="fa-solid fa-moon theme-toggle-icon" id="themeIcon" aria-hidden="true"></i>
+        <span class="theme-toggle-text" id="themeText">Dark mode</span>
+      </button>
+    </header>
+
+    <main class="page-shell">
+      <section class="error-shell">
+        <div class="error-card">
+          <div class="error-icon">
+            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+          </div>
+          <p class="eyebrow">Unavailable</p>
+          <h1>That secret note is no longer here.</h1>
+          <p class="hero-copy">
+            The link may be invalid, expired, or already burned after opening.
+          </p>
+
+          <div class="error-actions">
+            <a class="btn btn-primary" href="/">
+              <i class="fa-solid fa-house" aria-hidden="true"></i>
+              <span>Back to home</span>
+            </a>
+            <a class="btn btn-secondary" href="/index.html#create">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i>
+              <span>Create a secret message</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Powered by <strong>Benfei Tech</strong></p>
+    </footer>
+
+    <script src="assets/js/404.js"></script>
+  </body>
+</html>
