@@ -1,162 +1,171 @@
 <!DOCTYPE html>
-  <html lang="en" data-theme="light">  
-  <head>  
-    <meta charset="UTF-8" />  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
-    <title>Enc Note — Read Secret Message</title>  
-    <meta  
-      name="description"  
-      content="Read a secret Enc Note message once before it burns."  
-    />  <link rel="stylesheet" href="assets/css/read.css" />  
-<link  
-  rel="stylesheet"  
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"  
-  referrerpolicy="no-referrer"  
-/>  
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enc Note — Read Secret Message</title>
+    <meta
+      name="description"
+      content="Read a secret Enc Note message once before it burns."
+    />
 
-  </head>  
-  <body>  
-    <div class="bg-glow bg-glow-1"></div>  
-    <div class="bg-glow bg-glow-2"></div>  <header class="site-header">  
-  <a class="brand" href="/" aria-label="Enc Note home">  
-    <span class="brand-mark">EN</span>  
-    <span class="brand-text">  
-      <strong>Enc Note</strong>  
-      <small>Secure one-time secret messages</small>  
-    </span>  
-  </a>  
+    <link rel="stylesheet" href="assets/css/read.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      referrerpolicy="no-referrer"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
 
-  <button class="theme-toggle theme-toggle-icon-only" id="themeToggle" type="button" aria-label="Toggle theme">  
-    <i class="fa-solid fa-moon theme-toggle-icon" id="themeIcon" aria-hidden="true"></i>  
-  </button>  
-</header>  
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Enc Note home">
+        <span class="brand-mark">EN</span>
+        <span class="brand-text">
+          <strong>Enc Note</strong>
+          <small>Secure one-time secret messages</small>
+        </span>
+      </a>
 
-<main class="page-shell">  
+      <button class="theme-toggle theme-toggle-icon-only" id="themeToggle" type="button" aria-label="Toggle theme">
+        <i class="fa-solid fa-moon theme-toggle-icon" id="themeIcon" aria-hidden="true"></i>
+      </button>
+    </header>
 
-  <!-- READ SECTION (UNCHANGED) -->  
-  <section class="read-hero">  
-    <div class="read-card">  
-      <div class="read-topline">  
-        <span class="eyebrow">Secure read mode</span>  
-        <span class="status-chip" id="statusChip">Checking note...</span>  
-      </div>  
+    <main class="page-shell">
+      <section class="read-hero">
+        <div class="read-card">
+          <div class="read-topline">
+            <span class="eyebrow">Secure read mode</span>
+            <span class="status-chip" id="statusChip">Checking note...</span>
+          </div>
 
-      <h1>Open the secret message</h1>  
-      <p class="hero-copy" id="readIntro">  
-        This note will be checked for expiry and access rules before it can be opened.  
-      </p>  
+          <h1>Open the secret message</h1>
 
-      <div class="meta-row" id="metaRow">  
-        <span>  
-          <i class="fa-regular fa-clock"></i>  
-          <strong>Expiry:</strong>  
-          <span id="expiresAtText">—</span>  
-        </span>  
-        <span>  
-          <i class="fa-solid fa-lock"></i>  
-          <strong>Protected:</strong>  
-          <span id="passwordStateText">—</span>  
-        </span>  
-      </div>  
+          <p class="hero-copy" id="readIntro">
+            This note will be checked for expiry and access rules before it can be opened.
+          </p>
 
-      <form class="read-form" id="readForm">  
-        <div class="field hidden" id="passwordWrap">  
-          <label for="readPassword">Password</label>  
-          <div class="input-with-icon password-input">  
-            <i class="fa-solid fa-key"></i>  
-            <input  
-              type="password"  
-              id="readPassword"  
-              name="readPassword"  
-              placeholder="Enter the password"  
-            />  
-            <button  
-              class="password-toggle-btn"  
-              id="readPasswordToggleBtn"  
-              type="button"  
-            >  
-              <i class="fa-regular fa-eye" id="readPasswordToggleIcon"></i>  
-            </button>  
-          </div>  
-        </div>  
+          <div class="sender-wrap hidden" id="senderNameWrap">
+            <span class="sender-label">Sent by</span>
+            <span class="sender-name" id="senderNameText"></span>
+          </div>
 
-        <div class="form-actions">  
-          <button class="btn btn-primary" type="submit" id="readBtn">  
-            <i class="fa-solid fa-eye"></i>  
-            <span>Open message</span>  
-          </button>  
+          <div class="meta-row" id="metaRow">
+            <span>
+              <i class="fa-regular fa-clock" aria-hidden="true"></i>
+              <strong>Expiry:</strong>
+              <span id="expiresAtText">—</span>
+            </span>
+            <span>
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              <strong>Protected:</strong>
+              <span id="passwordStateText">—</span>
+            </span>
+          </div>
 
-          <a class="btn btn-secondary" href="/index.html#create">  
-            <i class="fa-solid fa-plus"></i>  
-            <span>Create your own secret message</span>  
-          </a>  
-        </div>  
-      </form>  
+          <form class="read-form" id="readForm">
+            <div class="field hidden" id="passwordWrap">
+              <label for="readPassword">Password</label>
+              <div class="input-with-icon password-input">
+                <i class="fa-solid fa-key" aria-hidden="true"></i>
+                <input
+                  type="password"
+                  id="readPassword"
+                  name="readPassword"
+                  placeholder="Enter the password"
+                />
+                <button
+                  class="password-toggle-btn"
+                  id="readPasswordToggleBtn"
+                  type="button"
+                >
+                  <i class="fa-regular fa-eye" id="readPasswordToggleIcon" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
 
-      <div class="read-output hidden" id="readOutput">  
-        <div class="read-output-head">  
-          <div class="read-badge">  
-            <i class="fa-solid fa-circle-check"></i>  
-            <span>Below is the message 👇</span>  
-          </div>  
-        </div>  
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit" id="readBtn">
+                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                <span>Open message</span>
+              </button>
 
-        <div class="message-panel">  
-          <pre id="messageText"></pre>  
-        </div>  
+              <a class="btn btn-secondary" href="/index.html#create">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <span>Create your own secret message</span>
+              </a>
+            </div>
+          </form>
 
-        <p class="post-note">  
-          The message has been marked as opened and will no longer be accessible.  
-        </p>  
+          <div class="read-output hidden" id="readOutput">
+            <div class="read-output-head">
+              <div class="read-badge">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                <span>Below is the message 👇</span>
+              </div>
+            </div>
 
-        <div class="opened-actions">  
-          <a class="btn btn-secondary" href="/index.html#create">  
-            <i class="fa-solid fa-plus"></i>  
-            <span>Create your own secret message</span>  
-          </a>  
-        </div>  
-      </div>  
+            <div class="message-panel">
+              <pre id="messageText"></pre>
+            </div>
 
-      <div class="read-warning" id="readWarning">  
-        <i class="fa-solid fa-shield-halved"></i>  
-        <p>  
-          After successful opening, the note is burned. Use the password carefully if the sender enabled one.  
-        </p>  
-      </div>  
-    </div>  
-  </section>  
+            <p class="post-note">
+              The message has been marked as opened and will no longer be accessible.
+            </p>
 
-  <!-- ✅ MOVED FOLLOW SECTION HERE -->  
-  <section class="follow-wrap">  
-    <p class="follow-title">Follow our social handles</p>  
+            <div class="opened-actions">
+              <a class="btn btn-secondary" href="/index.html#create">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <span>Create your own secret message</span>
+              </a>
+            </div>
+          </div>
 
-    <nav class="social-strip">  
-      <a href="https://www.youtube.com/@benfeitech" target="_blank">  
-        <i class="fa-brands fa-youtube"></i>  
-      </a>  
-      <a href="https://chat.whatsapp.com/JnYZ1j3LjJcL8ToAjcmCWe?mode=gi_t" target="_blank">  
-        <i class="fa-brands fa-whatsapp"></i>  
-      </a>  
-      <a href="https://t.me/benfeitech" target="_blank">  
-        <i class="fa-brands fa-telegram"></i>  
-      </a>  
-      <a href="https://github.com/Benfeitech" target="_blank">  
-        <i class="fa-brands fa-github"></i>  
-      </a>  
-      <a href="https://www.linkedin.com/in/benfei-tech-ab6901304?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank">  
-        <i class="fa-brands fa-linkedin-in"></i>  
-      </a>  
-    </nav>  
-  </section>  
+          <div class="read-warning" id="readWarning">
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            <p>
+              After successful opening, the note is burned. Use the password carefully if the sender enabled one.
+            </p>
+          </div>
+        </div>
+      </section>
 
-</main>  
+      <footer class="site-footer">
+        <p>Powered by <strong>Benfei Tech</strong></p>
+      </footer>
 
-<footer class="site-footer">  
-  <p>Powered by <strong>Benfei Tech</strong></p>  
-</footer>  
+      <section class="follow-wrap">
+        <p class="follow-title">Follow our social handles</p>
 
-<script src="assets/js/read.js"></script>
+        <nav class="social-strip" aria-label="Follow our social handles">
+          <a href="https://www.youtube.com/@benfeitech" target="_blank" rel="noreferrer" aria-label="YouTube">
+            <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+          </a>
+          <a href="https://chat.whatsapp.com/JnYZ1j3LjJcL8ToAjcmCWe?mode=gi_t" target="_blank" rel="noreferrer" aria-label="WhatsApp">
+            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+          </a>
+          <a href="https://t.me/benfeitech" target="_blank" rel="noreferrer" aria-label="Telegram">
+            <i class="fa-brands fa-telegram" aria-hidden="true"></i>
+          </a>
+          <a href="https://github.com/Benfeitech" target="_blank" rel="noreferrer" aria-label="GitHub">
+            <i class="fa-brands fa-github" aria-hidden="true"></i>
+          </a>
+          <a
+            href="https://www.linkedin.com/in/benfei-tech-ab6901304?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="LinkedIn"
+          >
+            <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+          </a>
+        </nav>
+      </section>
+    </main>
 
-  </body>  
+    <script src="assets/js/read.js"></script>
+  </body>
 </html>
