@@ -15,9 +15,11 @@ const statusChip = document.getElementById("statusChip");
 const expiresAtText = document.getElementById("expiresAtText");
 const passwordStateText = document.getElementById("passwordStateText");
 
-// NEW (safe additions)
+// Safe additions
 const readPasswordToggleBtn = document.getElementById("readPasswordToggleBtn");
 const readPasswordToggleIcon = document.getElementById("readPasswordToggleIcon");
+const senderNameWrap = document.getElementById("senderNameWrap");
+const senderNameText = document.getElementById("senderNameText");
 
 const THEME_KEY = "encnote-theme";
 const slug = new URLSearchParams(window.location.search).get("slug") || "";
@@ -40,7 +42,6 @@ function applyTheme(theme) {
     ? "fa-solid fa-sun theme-toggle-icon"
     : "fa-solid fa-moon theme-toggle-icon";
 
-  // SAFE: only update text if it exists
   if (themeText) {
     themeText.textContent = isDark ? "Light mode" : "Dark mode";
   }
@@ -73,12 +74,23 @@ function setLoading(isLoading) {
     : '<i class="fa-solid fa-eye" aria-hidden="true"></i><span>Open message</span>';
 }
 
-function setState({ chip, intro, protectedText, expiresAt, showPassword }) {
+function setState({ chip, intro, protectedText, expiresAt, showPassword, senderName }) {
   if (chip) statusChip.textContent = chip;
   if (intro) readIntro.textContent = intro;
   if (protectedText !== undefined) passwordStateText.textContent = protectedText;
   if (expiresAt !== undefined) expiresAtText.textContent = expiresAt;
+
   passwordWrap.classList.toggle("hidden", !showPassword);
+
+  if (senderNameWrap && senderNameText) {
+    const hasSender = Boolean(senderName && String(senderName).trim());
+    senderNameWrap.classList.toggle("hidden", !hasSender);
+    if (hasSender) {
+      senderNameText.textContent = senderName;
+    } else {
+      senderNameText.textContent = "";
+    }
+  }
 }
 
 function showBurnedMessage(message) {
@@ -86,7 +98,6 @@ function showBurnedMessage(message) {
   readOutput.classList.remove("hidden");
   readWarning.classList.add("hidden");
 
-  // ✅ FIX: don't hide form, just disable inputs (keeps "create your own message" button visible)
   readForm.querySelectorAll("input, button").forEach((el) => {
     if (el.id !== "readPasswordToggleBtn") {
       el.disabled = true;
@@ -101,6 +112,18 @@ function friendlyError(message, chip = "Unavailable") {
   readIntro.textContent = message;
   readWarning.classList.remove("hidden");
   readOutput.classList.add("hidden");
+}
+
+function toggleReadPasswordVisibility() {
+  const isHidden = readPassword.type === "password";
+  readPassword.type = isHidden ? "text" : "password";
+  readPasswordToggleIcon.className = isHidden
+    ? "fa-regular fa-eye-slash"
+    : "fa-regular fa-eye";
+}
+
+if (readPasswordToggleBtn) {
+  readPasswordToggleBtn.addEventListener("click", toggleReadPasswordVisibility);
 }
 
 async function loadNoteStatus() {
@@ -140,7 +163,8 @@ async function loadNoteStatus() {
         : "This note is ready. Open it once and it will burn immediately after reading.",
       protectedText: data.passwordProtected ? "Yes" : "No",
       expiresAt: data.expiresAt ? new Date(data.expiresAt).toLocaleString() : "—",
-      showPassword: Boolean(data.passwordProtected)
+      showPassword: Boolean(data.passwordProtected),
+      senderName: data.senderName || ""
     });
 
     if (!data.passwordProtected) {
@@ -208,21 +232,6 @@ readForm.addEventListener("submit", async (event) => {
     setLoading(false);
   }
 });
-
-/* =========================
-PASSWORD TOGGLE (NEW)
-========================= */
-function toggleReadPasswordVisibility() {
-  const isHidden = readPassword.type === "password";
-  readPassword.type = isHidden ? "text" : "password";
-  readPasswordToggleIcon.className = isHidden
-    ? "fa-regular fa-eye-slash"
-    : "fa-regular fa-eye";
-}
-
-if (readPasswordToggleBtn) {
-  readPasswordToggleBtn.addEventListener("click", toggleReadPasswordVisibility);
-}
 
 initTheme();
 loadNoteStatus();
