@@ -3,6 +3,7 @@ const themeToggle = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
 
 const form = document.getElementById("createNoteForm");
+const senderNameEl = document.getElementById("senderName");
 const messageEl = document.getElementById("message");
 const expiresInEl = document.getElementById("expiresIn");
 const passwordOptionEl = document.getElementById("passwordOption");
@@ -15,6 +16,7 @@ const submitBtn = document.getElementById("submitBtn");
 const resetBtn = document.getElementById("resetBtn");
 const resultEmpty = document.getElementById("resultEmpty");
 const resultSuccess = document.getElementById("resultSuccess");
+const resultSkeleton = document.getElementById("resultSkeleton");
 const generatedLinkEl = document.getElementById("generatedLink");
 const copyLinkBtn = document.getElementById("copyLinkBtn");
 const openLinkBtn = document.getElementById("openLinkBtn");
@@ -38,7 +40,10 @@ function applyTheme(theme) {
   themeIcon.className = isDark
     ? "fa-solid fa-sun theme-toggle-icon"
     : "fa-solid fa-moon theme-toggle-icon";
-  themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+  themeToggle.setAttribute(
+    "aria-label",
+    isDark ? "Switch to light mode" : "Switch to dark mode"
+  );
 }
 
 function initTheme() {
@@ -63,30 +68,56 @@ function togglePasswordField() {
   if (!enabled) {
     passwordEl.value = "";
     passwordEl.type = "password";
-    passwordToggleIcon.className = "fa-regular fa-eye";
-    passwordToggleBtn.setAttribute("aria-label", "Show password");
+    if (passwordToggleIcon) {
+      passwordToggleIcon.className = "fa-regular fa-eye";
+    }
+    if (passwordToggleBtn) {
+      passwordToggleBtn.setAttribute("aria-label", "Show password");
+    }
   }
 }
 
 function togglePasswordVisibility() {
   const isHidden = passwordEl.type === "password";
   passwordEl.type = isHidden ? "text" : "password";
-  passwordToggleIcon.className = isHidden ? "fa-regular fa-eye-slash" : "fa-regular fa-eye";
-  passwordToggleBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+
+  if (passwordToggleIcon) {
+    passwordToggleIcon.className = isHidden
+      ? "fa-regular fa-eye-slash"
+      : "fa-regular fa-eye";
+  }
+
+  if (passwordToggleBtn) {
+    passwordToggleBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+  }
+}
+
+function showLoadingState() {
+  if (resultEmpty) resultEmpty.classList.add("hidden");
+  if (resultSuccess) resultSuccess.classList.add("hidden");
+  if (resultSkeleton) resultSkeleton.classList.remove("hidden");
+}
+
+function hideLoadingState() {
+  if (resultSkeleton) resultSkeleton.classList.add("hidden");
 }
 
 function showResult(link) {
   currentGeneratedLink = link;
   generatedLinkEl.textContent = link;
-  resultEmpty.classList.add("hidden");
-  resultSuccess.classList.remove("hidden");
+
+  if (resultEmpty) resultEmpty.classList.add("hidden");
+  if (resultSkeleton) resultSkeleton.classList.add("hidden");
+  if (resultSuccess) resultSuccess.classList.remove("hidden");
 }
 
 function resetResult() {
   currentGeneratedLink = "";
   generatedLinkEl.textContent = "";
-  resultEmpty.classList.remove("hidden");
-  resultSuccess.classList.add("hidden");
+
+  if (resultEmpty) resultEmpty.classList.remove("hidden");
+  if (resultSkeleton) resultSkeleton.classList.add("hidden");
+  if (resultSuccess) resultSuccess.classList.add("hidden");
 }
 
 function getExpiryMinutes(value) {
@@ -108,11 +139,12 @@ themeToggle.addEventListener("click", () => {
 });
 
 passwordOptionEl.addEventListener("change", togglePasswordField);
-passwordToggleBtn.addEventListener("click", togglePasswordVisibility);
+passwordToggleBtn?.addEventListener("click", togglePasswordVisibility);
 messageEl.addEventListener("input", updateCount);
 
 resetBtn.addEventListener("click", () => {
   form.reset();
+  if (senderNameEl) senderNameEl.value = "";
   togglePasswordField();
   updateCount();
   resetResult();
@@ -138,6 +170,7 @@ openLinkBtn.addEventListener("click", () => {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
+  const senderName = senderNameEl ? senderNameEl.value.trim() : "";
   const message = messageEl.value.trim();
   const expiresIn = expiresInEl.value;
   const passwordEnabled = passwordOptionEl.checked;
@@ -167,11 +200,14 @@ form.addEventListener("submit", async (event) => {
   submitBtn.innerHTML =
     '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><span>Creating...</span>';
 
+  showLoadingState();
+
   try {
     const response = await fetch("/api/notes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        senderName,
         message,
         password: passwordEnabled ? password : "",
         expiresIn,
@@ -191,6 +227,7 @@ form.addEventListener("submit", async (event) => {
     toast.fire({ icon: "success", title: "Secret link created" });
 
     form.reset();
+    if (senderNameEl) senderNameEl.value = "";
     togglePasswordField();
     updateCount();
   } catch (error) {
@@ -198,6 +235,7 @@ form.addEventListener("submit", async (event) => {
       icon: "error",
       title: error.message || "Something went wrong"
     });
+    hideLoadingState();
   } finally {
     submitBtn.disabled = false;
     submitBtn.innerHTML =
