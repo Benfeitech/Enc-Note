@@ -61,13 +61,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, password = "", durationMinutes } = req.body || {};
+    const { message, password = "", durationMinutes, senderName = "" } = req.body || {};
 
     if (typeof message !== "string" || !message.trim()) {
       return res.status(400).json({ error: "Message is required" });
     }
 
     const trimmedMessage = message.trim();
+    const trimmedSenderName = String(senderName || "").trim().slice(0, 80);
 
     if (trimmedMessage.length < 5) {
       return res.status(400).json({ error: "Message is too short" });
@@ -85,6 +86,7 @@ export default async function handler(req, res) {
 
     const { error } = await supabase.from("notes").insert({
       slug,
+      sender_name: trimmedSenderName || null,
       encrypted_content: encryptedContent,
       iv,
       salt,
@@ -105,7 +107,8 @@ export default async function handler(req, res) {
       success: true,
       slug,
       link,
-      expiresAt
+      expiresAt,
+      senderName: trimmedSenderName || null
     });
   } catch (error) {
     return res.status(500).json({
