@@ -3,6 +3,7 @@ const themeToggle = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
 
 const form = document.getElementById("createNoteForm");
+const senderNameEl = document.getElementById("senderName");
 const messageEl = document.getElementById("message");
 const expiresInEl = document.getElementById("expiresIn");
 const passwordOptionEl = document.getElementById("passwordOption");
@@ -38,7 +39,10 @@ function applyTheme(theme) {
   themeIcon.className = isDark
     ? "fa-solid fa-sun theme-toggle-icon"
     : "fa-solid fa-moon theme-toggle-icon";
-  themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+  themeToggle.setAttribute(
+    "aria-label",
+    isDark ? "Switch to light mode" : "Switch to dark mode"
+  );
 }
 
 function initTheme() {
@@ -113,6 +117,7 @@ messageEl.addEventListener("input", updateCount);
 
 resetBtn.addEventListener("click", () => {
   form.reset();
+  if (senderNameEl) senderNameEl.value = "";
   togglePasswordField();
   updateCount();
   resetResult();
@@ -138,6 +143,7 @@ openLinkBtn.addEventListener("click", () => {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
+  const senderName = senderNameEl ? senderNameEl.value.trim() : "";
   const message = messageEl.value.trim();
   const expiresIn = expiresInEl.value;
   const passwordEnabled = passwordOptionEl.checked;
@@ -172,6 +178,7 @@ form.addEventListener("submit", async (event) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        senderName,
         message,
         password: passwordEnabled ? password : "",
         expiresIn,
@@ -191,6 +198,7 @@ form.addEventListener("submit", async (event) => {
     toast.fire({ icon: "success", title: "Secret link created" });
 
     form.reset();
+    if (senderNameEl) senderNameEl.value = "";
     togglePasswordField();
     updateCount();
   } catch (error) {
