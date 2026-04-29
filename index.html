@@ -1,360 +1,168 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Enc Note — Secret Messages That Burn Once Read</title>
-    <meta
-      name="description"
-      content="Enc Note lets you create secret messages with optional passwords, expiry time, sender name, and one-time reading."
-    />
+<!DOCTYPE html>    
+<html lang="en" data-theme="light">    
+  <head>    
+    <meta charset="UTF-8" />    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />    
+    <title>Enc Note — Secret Messages That Burn Once Read</title>    
+    <meta    
+      name="description"    
+      content="Enc Note lets you create secret messages with optional passwords, expiry time, and one-time reading."    
+    />  <link rel="stylesheet" href="assets/css/styles.css" />    
+<link    
+  rel="stylesheet"    
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"    
+  referrerpolicy="no-referrer"    
+/>    
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>    </head>    
+  <body>    
+    <div class="bg-glow bg-glow-1"></div>    
+    <div class="bg-glow bg-glow-2"></div>  <header class="site-header">    
+  <a class="brand" href="/" aria-label="Enc Note home">    
+    <span class="brand-mark">EN</span>    
+    <span class="brand-text">    
+      <strong>Enc Note</strong>    
+      <small>Secret messages with one-time access</small>    
+    </span>    
+  </a>      <button class="theme-toggle theme-toggle-icon-only" id="themeToggle" type="button" aria-label="Toggle theme">    
+    <i class="fa-solid fa-moon theme-toggle-icon" id="themeIcon" aria-hidden="true"></i>    
+  </button>    
+</header>    <main class="page-shell">    
+  <section class="hero-card">    
+    <h1>Create secret messages that disappear after reading.</h1>    
+    <p class="hero-copy">    
+      Add a password, set an expiry time, generate a unique link, and let the message burn after the first open.    
+    </p>    
+  </section>      <section class="create-section" id="create">    
+    <div class="create-grid">    
+      <form class="form-card" id="createNoteForm">    
+        <div class="field">    
+          <label for="message">Secret message</label>    
+          <textarea    
+            id="message"    
+            name="message"    
+            rows="7"    
+            maxlength="5000"    
+            placeholder="Write your secret message here..."    
+            required    
+          ></textarea>    
+          <div class="field-meta">    
+            <span>Keep it clear and private.</span>    
+            <span id="charCount">0 / 5000</span>    
+          </div>    
+        </div>    <div class="field-row">    
+      <div class="field">    
+        <label for="expiresIn">Expiry time</label>    
+        <select id="expiresIn" name="expiresIn" required>    
+          <option value="5m">5 minutes</option>    
+          <option value="15m">15 minutes</option>    
+          <option value="1h" selected>1 hour</option>    
+          <option value="6h">6 hours</option>    
+          <option value="24h">24 hours</option>    
+        </select>    
+      </div>    
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-      referrerpolicy="no-referrer"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <div class="field">    
+        <label for="passwordOption">Password protection</label>    
+        <label class="switch-wrap" for="passwordOption">    
+          <input type="checkbox" id="passwordOption" />    
+          <span class="switch-ui"></span>    
+          <span class="switch-text">Require a password</span>    
+        </label>    
+      </div>    
+    </div>    
 
-    <style>
-      :root {
-        --app-bg: #ffffff;
-        --app-surface: rgba(255, 255, 255, 0.72);
-        --app-border: rgba(148, 163, 184, 0.22);
-        --app-text: #0f172a;
-        --app-muted: #64748b;
-      }
+    <div class="field password-field hidden" id="passwordFieldWrap">    
+      <label for="password">Password</label>    
 
-      html[data-theme="dark"] {
-        --app-bg: #000000;
-        --app-surface: rgba(15, 23, 42, 0.72);
-        --app-border: rgba(148, 163, 184, 0.16);
-        --app-text: #f8fafc;
-        --app-muted: #94a3b8;
-      }
+      <div class="input-with-icon password-input">    
+        <i class="fa-solid fa-lock" aria-hidden="true"></i>    
+        <input    
+          type="password"    
+          id="password"    
+          name="password"    
+          placeholder="Enter a strong password"    
+          autocomplete="new-password"    
+        />    
+        <button    
+          class="password-toggle-btn"    
+          id="passwordToggleBtn"    
+          type="button"    
+          aria-label="Show password"    
+        >    
+          <i class="fa-regular fa-eye" id="passwordToggleIcon" aria-hidden="true"></i>    
+        </button>    
+      </div>    
 
-      body {
-        background: var(--app-bg);
-        color: var(--app-text);
-        transition: background-color 250ms ease, color 250ms ease;
-      }
+      <small>Use the eye icon to review the password before creating the link.</small>    
+    </div>    
 
-      .glass {
-        background: var(--app-surface);
-        border: 1px solid var(--app-border);
-        backdrop-filter: blur(18px);
-      }
+    <div class="form-actions">    
+      <button class="btn btn-primary" type="submit" id="submitBtn">    
+        <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>    
+        <span>Create secure link</span>    
+      </button>    
+      <button class="btn btn-secondary" type="button" id="resetBtn">    
+        <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>    
+        <span>Reset</span>    
+      </button>    
+    </div>    
+  </form>    
 
-      .brand-enc {
-        color: #10b981;
-      }
+  <aside class="status-card">    
+    <div class="status-head">    
+      <p class="eyebrow">Link output</p>    
+      <h3>Ready to generate</h3>    
+    </div>    
 
-      .brand-note {
-        color: var(--app-text);
-      }
+    <div class="result-box" id="resultBox">    
+      <div class="result-empty" id="resultEmpty">    
+        <i class="fa-regular fa-paper-plane" aria-hidden="true"></i>    
+        <p>Your unique link will appear here after creation.</p>    
+      </div>    
 
-      .skeleton-line {
-        background: linear-gradient(
-          90deg,
-          rgba(148, 163, 184, 0.12) 0%,
-          rgba(148, 163, 184, 0.32) 50%,
-          rgba(148, 163, 184, 0.12) 100%
-        );
-        background-size: 200% 100%;
-        animation: shimmer 1.4s ease-in-out infinite;
-      }
+      <div class="result-success hidden" id="resultSuccess">    
+        <div class="result-check">    
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>    
+        </div>    
 
-      @keyframes shimmer {
-        0% {
-          background-position: 200% 0;
-        }
-        100% {
-          background-position: -200% 0;
-        }
-      }
-    </style>
-  </head>
+        <p class="result-title">Secret link created</p>    
+        <p class="result-link" id="generatedLink"></p>    
 
-  <body class="min-h-screen overflow-x-hidden antialiased text-[var(--app-text)]">
-    <header class="fixed inset-x-0 top-0 z-50 border-b border-[var(--app-border)] glass">
-      <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <a href="/" class="flex items-center gap-3" aria-label="Enc Note home">
-          <span class="inline-flex items-center rounded-2xl bg-slate-900 px-3 py-2 text-xs font-black tracking-[0.28em] uppercase text-white shadow-sm">
-            <span class="brand-enc">ENC</span><span class="brand-note">NOTE</span>
-          </span>
-          <span class="hidden sm:block text-sm text-[var(--app-muted)]">
-            Secret messages with one-time access
-          </span>
-        </a>
+        <div class="result-actions">    
+          <button class="btn btn-secondary" type="button" id="openLinkBtn">    
+            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>    
+            <span>Open link</span>    
+          </button>    
+          <button class="btn btn-primary" type="button" id="copyLinkBtn">    
+            <i class="fa-solid fa-copy" aria-hidden="true"></i>    
+            <span>Copy link</span>    
+          </button>    
+        </div>    
+      </div>    
+    </div>    
+  </aside>    
+</div>
 
-        <button
-          class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] text-[var(--app-text)] shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:ring-1 hover:ring-emerald-400/20"
-          id="themeToggle"
-          type="button"
-          aria-label="Toggle theme"
-        >
-          <i class="fa-solid fa-moon" id="themeIcon" aria-hidden="true"></i>
-        </button>
-      </div>
-    </header>
-
-    <main class="mx-auto max-w-6xl px-4 pb-10 pt-24 sm:px-6">
-      <section class="glass rounded-3xl p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-1 hover:ring-cyan-400/15 sm:p-8">
-        <div class="max-w-3xl">
-          <p class="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-[var(--app-muted)]">
-            Create secure note
-          </p>
-          <h1 class="text-3xl font-bold leading-tight sm:text-5xl">
-            Create secret messages that disappear after reading.
-          </h1>
-          <p class="mt-4 max-w-2xl text-base leading-7 text-[var(--app-muted)] sm:text-lg">
-            Add a sender name, password, and expiry time, then generate a unique link that can be opened once.
-          </p>
-        </div>
-      </section>
-
-      <section class="mt-8" id="create">
-        <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-          <form
-            class="glass rounded-3xl p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-1 hover:ring-cyan-400/15 sm:p-6"
-            id="createNoteForm"
-          >
-            <div class="space-y-5">
-              <div class="space-y-2">
-                <label for="senderName" class="text-sm font-semibold">Sender name</label>
-                <input
-                  id="senderName"
-                  name="senderName"
-                  type="text"
-                  maxlength="80"
-                  placeholder="Optional sender name"
-                  autocomplete="name"
-                  class="w-full rounded-2xl border border-[var(--app-border)] bg-white/60 px-4 py-3 text-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/10"
-                />
-                <p class="text-xs leading-5 text-[var(--app-muted)]">
-                  This name displays as sender of the message. It is optional and will only show on the read page if set.
-                </p>
-              </div>
-
-              <div class="space-y-2">
-                <label for="message" class="text-sm font-semibold">Secret message</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows="7"
-                  maxlength="5000"
-                  placeholder="Write your secret message here..."
-                  required
-                  class="w-full rounded-3xl border border-[var(--app-border)] bg-white/60 px-4 py-3 text-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/10"
-                ></textarea>
-                <div class="flex items-center justify-between text-xs text-[var(--app-muted)]">
-                  <span>Keep it clear and private.</span>
-                  <span id="charCount">0 / 5000</span>
-                </div>
-              </div>
-
-              <div class="grid gap-4 md:grid-cols-2">
-                <div class="space-y-2">
-                  <label for="expiresIn" class="text-sm font-semibold">Expiry time</label>
-                  <select
-                    id="expiresIn"
-                    name="expiresIn"
-                    required
-                    class="w-full rounded-2xl border border-[var(--app-border)] bg-white/60 px-4 py-3 text-sm outline-none transition-all duration-300 focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/10"
-                  >
-                    <option value="5m">5 minutes</option>
-                    <option value="15m">15 minutes</option>
-                    <option value="1h" selected>1 hour</option>
-                    <option value="6h">6 hours</option>
-                    <option value="24h">24 hours</option>
-                  </select>
-                </div>
-
-                <div class="space-y-2">
-                  <label for="passwordOption" class="text-sm font-semibold">Password protection</label>
-                  <label class="flex cursor-pointer items-center gap-3 rounded-2xl border border-[var(--app-border)] bg-white/50 px-4 py-3 transition-all duration-300 hover:border-cyan-400/40 hover:shadow-sm" for="passwordOption">
-                    <input type="checkbox" id="passwordOption" class="h-4 w-4 rounded border-slate-300 text-cyan-500 focus:ring-cyan-400/20" />
-                    <span class="text-sm text-[var(--app-text)]">Require a password</span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="hidden space-y-2" id="passwordFieldWrap">
-                <label for="password" class="text-sm font-semibold">Password</label>
-                <div class="relative">
-                  <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-sm text-[var(--app-muted)]" aria-hidden="true"></i>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter a strong password"
-                    autocomplete="new-password"
-                    class="w-full rounded-2xl border border-[var(--app-border)] bg-white/60 py-3 pl-11 pr-12 text-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/10"
-                  />
-                  <button
-                    class="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl text-[var(--app-muted)] transition-all duration-300 hover:bg-slate-100 hover:text-[var(--app-text)]"
-                    id="passwordToggleBtn"
-                    type="button"
-                    aria-label="Show password"
-                  >
-                    <i class="fa-regular fa-eye" id="passwordToggleIcon" aria-hidden="true"></i>
-                  </button>
-                </div>
-                <p class="text-xs leading-5 text-[var(--app-muted)]">
-                  Use the eye icon to review the password before creating the link.
-                </p>
-              </div>
-
-              <div class="flex flex-col gap-3 pt-1 sm:flex-row">
-                <button
-                  class="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:ring-1 hover:ring-emerald-400/20"
-                  type="submit"
-                  id="submitBtn"
-                >
-                  <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
-                  <span>Create secure link</span>
-                </button>
-
-                <button
-                  class="inline-flex items-center justify-center gap-2 rounded-2xl border border-[var(--app-border)] bg-white/50 px-5 py-3 text-sm font-semibold text-[var(--app-text)] shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:ring-1 hover:ring-cyan-400/15"
-                  type="button"
-                  id="resetBtn"
-                >
-                  <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
-                  <span>Reset</span>
-                </button>
-              </div>
-            </div>
-          </form>
-
-          <aside
-            class="glass rounded-3xl p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-1 hover:ring-cyan-400/15 sm:p-6"
-          >
-            <div class="mb-4">
-              <p class="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--app-muted)]">Link output</p>
-              <h3 class="mt-2 text-xl font-bold">Ready to generate</h3>
-            </div>
-
-            <div class="rounded-3xl border border-[var(--app-border)] bg-white/40 p-4">
-              <div class="hidden space-y-3" id="resultSkeleton" aria-hidden="true">
-                <div class="skeleton-line h-4 w-36 rounded-full"></div>
-                <div class="skeleton-line h-4 w-5/6 rounded-full"></div>
-                <div class="skeleton-line h-4 w-2/3 rounded-full"></div>
-                <div class="skeleton-line h-11 w-full rounded-2xl"></div>
-              </div>
-
-              <div class="flex min-h-[220px] items-center justify-center text-center" id="resultEmpty">
-                <div class="max-w-xs space-y-3">
-                  <i class="fa-regular fa-paper-plane text-3xl text-cyan-500" aria-hidden="true"></i>
-                  <p class="text-sm leading-6 text-[var(--app-muted)]">
-                    Your unique link will appear here after creation.
-                  </p>
-                </div>
-              </div>
-
-              <div class="hidden space-y-4" id="resultSuccess">
-                <div class="flex items-center gap-3">
-                  <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500">
-                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-                  </div>
-                  <div>
-                    <p class="text-sm font-semibold">Secret link created</p>
-                    <p class="text-xs text-[var(--app-muted)]">Copy or open the generated link below.</p>
-                  </div>
-                </div>
-
-                <p
-                  id="generatedLink"
-                  class="break-all rounded-2xl border border-[var(--app-border)] bg-white/60 p-4 text-sm leading-6 text-[var(--app-text)]"
-                ></p>
-
-                <div class="flex flex-col gap-3 sm:flex-row">
-                  <button
-                    class="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-[var(--app-border)] bg-white/60 px-4 py-3 text-sm font-semibold shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:ring-1 hover:ring-cyan-400/15"
-                    type="button"
-                    id="openLinkBtn"
-                  >
-                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
-                    <span>Open link</span>
-                  </button>
-
-                  <button
-                    class="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:ring-1 hover:ring-emerald-400/20"
-                    type="button"
-                    id="copyLinkBtn"
-                  >
-                    <i class="fa-solid fa-copy" aria-hidden="true"></i>
-                    <span>Copy link</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </aside>
-        </div>
-      </section>
-
-      <footer class="mt-14 border-t border-[var(--app-border)] pt-6">
-        <p class="text-center text-sm text-[var(--app-muted)]">
-          Powered by <strong class="font-semibold text-[var(--app-text)]">Benfei Tech</strong>
-        </p>
-      </footer>
-
-      <section class="mt-8 pb-6" id="follow" aria-label="Follow our handles">
-        <p class="mb-4 text-center text-sm font-semibold tracking-[0.18em] text-[var(--app-muted)] uppercase">
-          Follow our social handles
-        </p>
-
-        <div class="flex flex-wrap items-center justify-center gap-3">
-          <a
-            href="https://www.youtube.com/@benfeitech"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="YouTube"
-            class="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--app-border)] bg-white/50 text-[var(--app-text)] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:ring-1 hover:ring-cyan-400/15"
-          >
-            <i class="fa-brands fa-youtube" aria-hidden="true"></i>
-          </a>
-          <a
-            href="https://chat.whatsapp.com/JnYZ1j3LjJcL8ToAjcmCWe?mode=gi_t"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="WhatsApp"
-            class="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--app-border)] bg-white/50 text-[var(--app-text)] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:ring-1 hover:ring-cyan-400/15"
-          >
-            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-          </a>
-          <a
-            href="https://t.me/benfeitech"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Telegram"
-            class="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--app-border)] bg-white/50 text-[var(--app-text)] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:ring-1 hover:ring-cyan-400/15"
-          >
-            <i class="fa-brands fa-telegram" aria-hidden="true"></i>
-          </a>
-          <a
-            href="https://github.com/Benfeitech"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="GitHub"
-            class="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--app-border)] bg-white/50 text-[var(--app-text)] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:ring-1 hover:ring-cyan-400/15"
-          >
-            <i class="fa-brands fa-github" aria-hidden="true"></i>
-          </a>
-          <a
-            href="https://www.linkedin.com/in/benfei-tech-ab6901304?utm_source=share_via&utm_content=profile&utm_medium=member_android"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="LinkedIn"
-            class="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--app-border)] bg-white/50 text-[var(--app-text)] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:ring-1 hover:ring-cyan-400/15"
-          >
-            <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
-          </a>
-        </div>
-      </section>
-    </main>
-
-    <script src="assets/js/app.js"></script>
-  </body>
-</html>
+  </section>      <section class="follow-section" id="follow" aria-label="Follow our handles">    
+    <div class="social-strip">    
+      <a href="https://www.youtube.com/@benfeitech" target="_blank" rel="noreferrer" aria-label="YouTube">    
+        <i class="fa-brands fa-youtube" aria-hidden="true"></i>    
+      </a>    
+      <a href="https://chat.whatsapp.com/JnYZ1j3LjJcL8ToAjcmCWe?mode=gi_t" target="_blank" rel="noreferrer" aria-label="WhatsApp">    
+        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>    
+      </a>    
+      <a href="https://t.me/benfeitech" target="_blank" rel="noreferrer" aria-label="Telegram">    
+        <i class="fa-brands fa-telegram" aria-hidden="true"></i>    
+      </a>    
+      <a href="https://github.com/Benfeitech" target="_blank" rel="noreferrer" aria-label="GitHub">    
+        <i class="fa-brands fa-github" aria-hidden="true"></i>    
+      </a>    
+      <a href="https://www.linkedin.com/in/benfei-tech-ab6901304?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noreferrer" aria-label="LinkedIn">    
+        <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>    
+      </a>    
+    </div>    
+  </section>    
+</main>    <footer class="site-footer">    
+  <p>Powered by <strong>Benfei Tech</strong></p>    
+</footer>    <script src="assets/js/app.js"></script>    </body>    
+</html>   
