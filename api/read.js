@@ -66,7 +66,7 @@ export default async function handler(req, res) {
 
       const { data: note, error } = await supabase
         .from("notes")
-        .select("id, slug, password_protected, expires_at, is_opened")
+        .select("id, slug, sender_name, password_protected, expires_at, is_opened")
         .eq("slug", slug)
         .maybeSingle();
 
@@ -87,6 +87,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         slug: note.slug,
+        senderName: note.sender_name || null,
         passwordProtected: note.password_protected,
         expiresAt: note.expires_at,
         opened: note.is_opened
@@ -104,7 +105,7 @@ export default async function handler(req, res) {
 
       const { data: note, error } = await supabase
         .from("notes")
-        .select("id, slug, encrypted_content, iv, salt, password_protected, expires_at, is_opened")
+        .select("id, slug, sender_name, encrypted_content, iv, salt, password_protected, expires_at, is_opened")
         .eq("slug", cleanSlug)
         .maybeSingle();
 
@@ -162,7 +163,8 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         success: true,
-        message: decryptedMessage
+        message: decryptedMessage,
+        senderName: note.sender_name || null
       });
     }
 
