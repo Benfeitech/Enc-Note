@@ -1,138 +1,185 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Enc Note — Secret Messages That Burn Once Read</title>
+<!DOCTYPE html>  
+<html lang="en" data-theme="light">  
+  <head>  
+    <meta charset="UTF-8" />  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
+    <title>Enc Note — Secret Messages That Burn Once Read</title>  
+    <meta  
+      name="description"  
+      content="Enc Note lets you create secret messages with optional passwords, expiry time, and one-time reading."  
+    />  <link rel="stylesheet" href="assets/css/styles.css" />  
+<link  
+  rel="stylesheet"  
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"  
+  referrerpolicy="no-referrer"  
+/>  
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <link rel="stylesheet" href="assets/css/index.css" />
+  </head>  
+  <body>  
+    <div class="bg-glow bg-glow-1"></div>  
+    <div class="bg-glow bg-glow-2"></div>  <header class="site-header">  
+  <a class="brand" href="/" aria-label="Enc Note home">  
+    <span class="brand-mark">EN</span>  
+    <span class="brand-text">  
+      <strong>Enc Note</strong>  
+      <small>Secret messages with one-time access</small>  
+    </span>  
+  </a>  
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
+  <button class="theme-toggle theme-toggle-icon-only" id="themeToggle" type="button" aria-label="Toggle theme">  
+    <i class="fa-solid fa-moon theme-toggle-icon" id="themeIcon" aria-hidden="true"></i>  
+  </button>  
+</header>  
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  </head>
+<main class="page-shell">  
+  <section class="hero-card">  
+    <h1>Create secret messages that disappear after reading.</h1>  
+    <p class="hero-copy">  
+      Add a password, set an expiry time, generate a unique link, and let the message burn after the first open.  
+    </p>  
+  </section>  
 
-  <body>
-    <div class="bg-glow bg-glow-1"></div>
-    <div class="bg-glow bg-glow-2"></div>
+  <section class="create-section" id="create">  
+    <div class="create-grid">  
+      <form class="form-card" id="createNoteForm">  
+        <div class="field">  
+          <label for="message">Secret message</label>  
+          <textarea  
+            id="message"  
+            name="message"  
+            rows="7"  
+            maxlength="5000"  
+            placeholder="Write your secret message here..."  
+            required  
+          ></textarea>  
+          <div class="field-meta">  
+            <span>Keep it clear and private.</span>  
+            <span id="charCount">0 / 5000</span>  
+          </div>  
+        </div>  
 
-    <header class="site-header">
-      <a class="brand" href="/">
-        <span class="brand-mark">EN</span>
-        <span class="brand-text">
-          <strong>Enc Note</strong>
-          <small>Secret messages with one-time access</small>
-        </span>
-      </a>
+        <div class="field-row">  
+          <div class="field">  
+            <label for="expiresIn">Expiry time</label>  
+            <select id="expiresIn" name="expiresIn" required>  
+              <option value="5m">5 minutes</option>  
+              <option value="15m">15 minutes</option>  
+              <option value="1h" selected>1 hour</option>  
+              <option value="6h">6 hours</option>  
+              <option value="24h">24 hours</option>  
+            </select>  
+          </div>  
 
-      <button class="theme-toggle" id="themeToggle">
-        <i class="fa-solid fa-moon" id="themeIcon"></i>
-      </button>
-    </header>
+          <div class="field">  
+            <label for="passwordOption">Password protection</label>  
+            <label class="switch-wrap" for="passwordOption">  
+              <input type="checkbox" id="passwordOption" />  
+              <span class="switch-ui"></span>  
+              <span class="switch-text">Require a password</span>  
+            </label>  
+          </div>  
+        </div>  
 
-    <main class="page-shell">
+        <div class="field password-field hidden" id="passwordFieldWrap">  
+          <label for="password">Password</label>  
 
-      <section class="hero-card">
-        <h1>Create secret messages that disappear after reading.</h1>
-        <p>
-          Add a password, set an expiry time, generate a unique link, and let the message burn after the first open.
-        </p>
-      </section>
+          <div class="input-with-icon password-input">  
+            <i class="fa-solid fa-lock" aria-hidden="true"></i>  
+            <input  
+              type="password"  
+              id="password"  
+              name="password"  
+              placeholder="Enter a strong password"  
+              autocomplete="new-password"  
+            />  
+            <button  
+              class="password-toggle-btn"  
+              id="passwordToggleBtn"  
+              type="button"  
+              aria-label="Show password"  
+            >  
+              <i class="fa-regular fa-eye" id="passwordToggleIcon" aria-hidden="true"></i>  
+            </button>  
+          </div>  
 
-      <section class="create-section" id="create">
-        <div class="create-grid">
+          <small>Use the eye icon to review the password before creating the link.</small>  
+        </div>  
 
-          <!-- FORM -->
-          <form class="form-card" id="createNoteForm">
+        <div class="form-actions">  
+          <button class="btn btn-primary" type="submit" id="submitBtn">  
+            <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>  
+            <span>Create secure link</span>  
+          </button>  
+          <button class="btn btn-secondary" type="button" id="resetBtn">  
+            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>  
+            <span>Reset</span>  
+          </button>  
+        </div>  
+      </form>  
 
-            <div class="field">
-              <label>Secret message</label>
-              <textarea id="message" rows="7" maxlength="5000" required></textarea>
-              <div class="field-meta">
-                <span id="charCount">0 / 5000</span>
-              </div>
-            </div>
+      <aside class="status-card">  
+        <div class="status-head">  
+          <p class="eyebrow">Link output</p>  
+          <h3>Ready to generate</h3>  
+        </div>  
 
-            <div class="field-row">
-              <div class="field">
-                <label>Expiry time</label>
-                <select id="expiresIn">
-                  <option value="5m">5 minutes</option>
-                  <option value="1h" selected>1 hour</option>
-                  <option value="24h">24 hours</option>
-                </select>
-              </div>
+        <div class="result-box" id="resultBox">  
+          <div class="result-empty" id="resultEmpty">  
+            <i class="fa-regular fa-paper-plane" aria-hidden="true"></i>  
+            <p>Your unique link will appear here after creation.</p>  
+          </div>  
 
-              <div class="field">
-                <label>Password protection</label>
-                <input type="checkbox" id="passwordOption" />
-              </div>
-            </div>
+          <div class="result-success hidden" id="resultSuccess">  
+            <div class="result-check">  
+              <i class="fa-solid fa-circle-check" aria-hidden="true"></i>  
+            </div>  
 
-            <div class="field hidden" id="passwordFieldWrap">
-              <label>Password</label>
-              <div class="password-input">
-                <input type="password" id="password" />
-                <button type="button" id="passwordToggleBtn">
-                  <i class="fa-regular fa-eye" id="passwordToggleIcon"></i>
-                </button>
-              </div>
-            </div>
+            <p class="result-title">Secret link created</p>  
+            <p class="result-link" id="generatedLink"></p>  
 
-            <div class="form-actions">
-              <button class="btn primary" type="submit" id="submitBtn">
-                Create link
-              </button>
-              <button class="btn secondary" type="button" id="resetBtn">
-                Reset
-              </button>
-            </div>
-          </form>
+            <div class="result-actions">  
+              <button class="btn btn-secondary" type="button" id="openLinkBtn">  
+                <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>  
+                <span>Open link</span>  
+              </button>  
+              <button class="btn btn-primary" type="button" id="copyLinkBtn">  
+                <i class="fa-solid fa-copy" aria-hidden="true"></i>  
+                <span>Copy link</span>  
+              </button>  
+            </div>  
+          </div>  
+        </div>  
+      </aside>  
+    </div>  
+  </section>  
 
-          <!-- RESULT -->
-          <aside class="status-card">
+  <section class="follow-section" id="follow" aria-label="Follow our handles">  
+    <div class="social-strip">  
+      <a href="https://youtube.com/" target="_blank" rel="noreferrer" aria-label="YouTube">  
+        <i class="fa-brands fa-youtube" aria-hidden="true"></i>  
+      </a>  
+      <a href="https://wa.me/" target="_blank" rel="noreferrer" aria-label="WhatsApp">  
+        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>  
+      </a>  
+      <a href="https://t.me/" target="_blank" rel="noreferrer" aria-label="Telegram">  
+        <i class="fa-brands fa-telegram" aria-hidden="true"></i>  
+      </a>  
+      <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub">  
+        <i class="fa-brands fa-github" aria-hidden="true"></i>  
+      </a>  
+      <a href="https://linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn">  
+        <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>  
+      </a>  
+    </div>  
+  </section>  
+</main>  
 
-            <div id="resultBox">
-              <div id="resultEmpty">
-                <p>Your link will appear here</p>
-              </div>
+<footer class="site-footer">  
+  <p>Powered by <strong>Benfei Tech</strong></p>  
+</footer>  
 
-              <div id="resultSuccess" class="hidden">
-                <p id="generatedLink"></p>
+<script src="assets/js/app.js"></script>
 
-                <div class="result-actions">
-                  <button id="openLinkBtn" class="btn secondary">Open</button>
-                  <button id="copyLinkBtn" class="btn primary">Copy</button>
-                </div>
-              </div>
-            </div>
-
-          </aside>
-        </div>
-      </section>
-
-      <!-- ✅ FOLLOW SECTION UPDATED -->
-      <section class="follow-section">
-        <p class="follow-title">Follow our social handles</p>
-
-        <div class="social-strip">
-          <a href="#"><i class="fa-brands fa-youtube"></i></a>
-          <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
-          <a href="#"><i class="fa-brands fa-telegram"></i></a>
-          <a href="#"><i class="fa-brands fa-github"></i></a>
-          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-        </div>
-      </section>
-
-    </main>
-
-    <footer class="site-footer">
-      <p>Powered by <strong>Benfei Tech</strong></p>
-    </footer>
-
-    <script src="assets/js/app.js"></script>
-  </body>
-</html>
+  </body>  
+</html>  
