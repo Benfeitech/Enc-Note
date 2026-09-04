@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Enc-Note — Note Status</title>
+
+  <meta
+    name="description"
+    content="Check the opening status of your Enc-Note."
+  />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class"
+    };
+  </script>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    referrerpolicy="no-referrer"
+  />
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-white">
+
+  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-blue-500/15 blur-3xl"></div>
+    <div class="absolute right-[-10rem] top-20 h-[30rem] w-[30rem] rounded-full bg-emerald-500/10 blur-3xl"></div>
+  </div>
+
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/80">
+    <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
+
+      <a href="/" class="flex items-center gap-3">
+        <span class="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-blue-600 via-sky-500 to-emerald-500 font-black text-white">
+          EN
+        </span>
+
+        <span class="hidden sm:block">
+          <strong class="block text-sm font-black tracking-[0.18em]">
+            <span class="text-emerald-500">ENC</span>NOTE
+          </strong>
+
+          <small class="text-xs text-slate-500 dark:text-slate-400">
+            Private note status
+          </small>
+        </span>
+      </a>
+
+      <button
+        type="button"
+        data-theme-toggle
+        class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-white/5"
+      >
+        <i data-theme-icon class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-5xl px-4 pb-16 pt-28 sm:px-6">
+
+    <div class="mb-8">
+      <p class="text-sm font-black uppercase tracking-[0.18em] text-emerald-500">
+        Sender dashboard
+      </p>
+
+      <h1 class="mt-2 text-4xl font-black tracking-tight sm:text-5xl">
+        Track your secret note.
+      </h1>
+
+      <p class="mt-3 max-w-2xl leading-7 text-slate-500 dark:text-slate-400">
+        This private page shows note metadata and opening progress. It never reveals the secret content.
+      </p>
+    </div>
+
+    <section id="loadingState" class="rounded-[2rem] border border-slate-200 bg-white/80 p-8 shadow-xl dark:border-white/10 dark:bg-white/5">
+      <div class="flex items-center gap-4">
+        <div class="grid h-12 w-12 place-items-center rounded-2xl bg-blue-500/10 text-blue-500">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+        </div>
+
+        <div>
+          <p class="font-black">Checking note status...</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400">
+            Please keep this page private.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="statusContent" class="hidden space-y-5">
+
+      <div class="rounded-[2rem] border border-slate-200 bg-white/80 p-6 shadow-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
+
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+
+          <div>
+            <p class="text-xs font-black uppercase tracking-widest text-slate-400">
+              Current status
+            </p>
+
+            <div class="mt-2 flex items-center gap-3">
+              <span id="statusDot" class="h-3 w-3 rounded-full bg-emerald-500"></span>
+              <h2 id="statusText" class="text-3xl font-black capitalize">
+                Unopened
+              </h2>
+            </div>
+          </div>
+
+          <button
+            id="refreshBtn"
+            type="button"
+            class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 px-5 py-3 font-bold dark:border-white/10"
+          >
+            <i class="fa-solid fa-rotate"></i>
+            Refresh
+          </button>
+
+        </div>
+
+        <div class="mt-8">
+
+          <div class="mb-3 flex items-center justify-between text-sm">
+            <span class="font-bold">Open progress</span>
+            <span id="progressText" class="font-black text-emerald-500">
+              0 / 1
+            </span>
+          </div>
+
+          <div class="h-4 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
+            <div
+              id="progressBar"
+              class="h-full rounded-full bg-gradient-to-r from-blue-600 via-sky-500 to-emerald-500 transition-all duration-500"
+              style="width: 0%"
+            ></div>
+          </div>
+
+          <p id="remainingText" class="mt-3 text-sm text-slate-500 dark:text-slate-400">
+            1 opening remaining
+          </p>
+
+        </div>
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+
+        <div class="rounded-[2rem] border border-slate-200 bg-white/80 p-6 dark:border-white/10 dark:bg-white/5">
+          <p class="text-xs font-black uppercase tracking-widest text-slate-400">Sender</p>
+          <p id="senderText" class="mt-3 text-xl font-black">—</p>
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200 bg-white/80 p-6 dark:border-white/10 dark:bg-white/5">
+          <p class="text-xs font-black uppercase tracking-widest text-slate-400">Content</p>
+          <p id="contentTypeText" class="mt-3 text-xl font-black">—</p>
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200 bg-white/80 p-6 dark:border-white/10 dark:bg-white/5">
+          <p class="text-xs font-black uppercase tracking-widest text-slate-400">Created</p>
+          <p id="createdText" class="mt-3 text-sm font-bold">—</p>
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200 bg-white/80 p-6 dark:border-white/10 dark:bg-white/5">
+          <p class="text-xs font-black uppercase tracking-widest text-slate-400">Expires</p>
+          <p id="expiresText" class="mt-3 text-sm font-bold">—</p>
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200 bg-white/80 p-6 dark:border-white/10 dark:bg-white/5">
+          <p class="text-xs font-black uppercase tracking-widest text-slate-400">First opened</p>
+          <p id="openedText" class="mt-3 text-sm font-bold">Not opened yet</p>
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200 bg-white/80 p-6 dark:border-white/10 dark:bg-white/5">
+          <p class="text-xs font-black uppercase tracking-widest text-slate-400">Password</p>
+          <p id="passwordText" class="mt-3 text-sm font-bold">No</p>
+        </div>
+
+      </div>
+
+      <div class="rounded-3xl border border-blue-500/20 bg-blue-500/10 p-5 text-sm leading-7 text-slate-600 dark:text-slate-300">
+        <i class="fa-solid fa-circle-info mr-2 text-blue-500"></i>
+        Keep this status link private. Anyone who possesses it may be able to view the note's status.
+      </div>
+
+    </section>
+
+    <section id="errorState" class="hidden rounded-[2rem] border border-rose-500/20 bg-rose-500/5 p-8">
+      <div class="grid h-14 w-14 place-items-center rounded-2xl bg-rose-500/10 text-xl text-rose-500">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+
+      <h2 id="errorTitle" class="mt-5 text-2xl font-black">
+        Status unavailable
+      </h2>
+
+      <p id="errorMessage" class="mt-3 leading-7 text-slate-500 dark:text-slate-400">
+        This status link is invalid or unavailable.
+      </p>
+
+      <a
+        href="/create.html"
+        class="mt-6 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-emerald-500 px-6 py-4 font-extrabold text-white"
+      >
+        <i class="fa-solid fa-plus"></i>
+        Create a new note
+      </a>
+    </section>
+
+  </main>
+
+  <footer class="px-4 pb-8 text-center text-sm text-slate-500 dark:text-slate-400">
+    Powered by <strong class="text-slate-800 dark:text-white">Benfei Tech</strong>
+  </footer>
+
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/status.js"></script>
+</body>
+</html>
