@@ -161,9 +161,10 @@ function normalizeImageMeta(image) {
     throw new Error("Image public ID is missing");
   }
 
-  if (!publicId.startsWith("note-")) {
-    throw new Error("Invalid image asset");
-  }
+  if (
+  !publicId.startsWith("enc-note/") ||
+  !publicId.slice("enc-note/".length).startsWith("note-")
+) 
 
   const format = String(
     image.format || ""
