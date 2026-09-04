@@ -1,171 +1,252 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Enc Note — Read Secret Message</title>
-    <meta
-      name="description"
-      content="Read a secret Enc Note message once before it burns."
-    />
+<html lang="en" class="scroll-smooth" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="assets/css/read.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-      referrerpolicy="no-referrer"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  </head>
-  <body>
-    <div class="bg-glow bg-glow-1"></div>
-    <div class="bg-glow bg-glow-2"></div>
+  <title>Enc-Note — Secret Message</title>
 
-    <header class="site-header">
-      <a class="brand" href="/" aria-label="Enc Note home">
-        <span class="brand-mark">EN</span>
-        <span class="brand-text">
-          <strong><span style="color: #10b981;">ENC</span>NOTE</strong>
-          <small>Secure one-time secret messages</small>
+  <meta
+    name="description"
+    content="Open your Enc-Note secret message."
+  />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class"
+    };
+  </script>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    referrerpolicy="no-referrer"
+  />
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased transition-colors dark:bg-slate-950 dark:text-white">
+
+  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute -left-32 -top-32 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl"></div>
+    <div class="absolute right-[-8rem] top-60 h-96 w-96 rounded-full bg-emerald-500/15 blur-3xl"></div>
+  </div>
+
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/80">
+    <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
+      <a href="/" class="flex items-center gap-3">
+        <span class="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-blue-600 via-sky-500 to-emerald-500 font-black text-white">
+          EN
+        </span>
+
+        <span class="hidden sm:block">
+          <strong class="block text-sm font-black tracking-[0.18em]">
+            <span class="text-emerald-500">ENC</span>NOTE
+          </strong>
+
+          <small class="text-xs text-slate-500 dark:text-slate-400">
+            Secure one-time sharing
+          </small>
         </span>
       </a>
 
-      <button class="theme-toggle theme-toggle-icon-only" id="themeToggle" type="button" aria-label="Toggle theme">
-        <i class="fa-solid fa-moon theme-toggle-icon" id="themeIcon" aria-hidden="true"></i>
+      <button
+        type="button"
+        data-theme-toggle
+        class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-white/5"
+      >
+        <i data-theme-icon class="fa-solid fa-moon"></i>
       </button>
-    </header>
+    </div>
+  </header>
 
-    <main class="page-shell">
-      <section class="read-hero">
-        <div class="read-card">
-          <div class="read-topline">
-            <span class="eyebrow">Secure read mode</span>
-            <span class="status-chip" id="statusChip">Checking note...</span>
-          </div>
+  <main class="mx-auto max-w-4xl px-4 pb-16 pt-28 sm:px-6">
 
-          <h1>Open the secret message</h1>
+    <section class="rounded-[2rem] border border-slate-200 bg-white/80 p-5 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-8">
 
-          <p class="hero-copy" id="readIntro">
-            This note will be checked for expiry and access rules before it can be opened.
-          </p>
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <span class="inline-flex rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-300">
+            Secure read mode
+          </span>
 
-          <div class="sender-wrap hidden" id="senderNameWrap">
-            <span class="sender-label">Sent by</span>
-            <span class="sender-name" id="senderNameText"></span>
-          </div>
+          <h1 class="mt-5 text-4xl font-black tracking-tight sm:text-5xl">
+            Open the secret message.
+          </h1>
+        </div>
 
-          <div class="meta-row" id="metaRow">
-            <span>
-              <i class="fa-regular fa-clock" aria-hidden="true"></i>
-              <strong>Expiry:</strong>
-              <span id="expiresAtText">—</span>
-            </span>
-            <span>
-              <i class="fa-solid fa-lock" aria-hidden="true"></i>
-              <strong>Protected:</strong>
-              <span id="passwordStateText">—</span>
-            </span>
-          </div>
+        <span
+          id="statusChip"
+          class="inline-flex w-fit rounded-full border border-slate-200 px-4 py-2 text-sm font-bold dark:border-white/10"
+        >
+          Checking note...
+        </span>
+      </div>
 
-          <form class="read-form" id="readForm">
-            <div class="field hidden" id="passwordWrap">
-              <label for="readPassword">Password</label>
-              <div class="input-with-icon password-input">
-                <i class="fa-solid fa-key" aria-hidden="true"></i>
-                <input
-                  type="password"
-                  id="readPassword"
-                  name="readPassword"
-                  placeholder="Enter the password"
-                />
-                <button
-                  class="password-toggle-btn"
-                  id="readPasswordToggleBtn"
-                  type="button"
-                >
-                  <i class="fa-regular fa-eye" id="readPasswordToggleIcon" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
+      <p
+        id="readIntro"
+        class="mt-5 max-w-3xl leading-7 text-slate-600 dark:text-slate-300"
+      >
+        Checking availability...
+      </p>
 
-            <div class="form-actions">
-              <button class="btn btn-primary" type="submit" id="readBtn">
-                <i class="fa-solid fa-eye" aria-hidden="true"></i>
-                <span>Open message</span>
-              </button>
+      <div
+        id="senderNameWrap"
+        class="mt-5 hidden w-fit rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-white/10 dark:bg-white/[0.03]"
+      >
+        <span class="text-xs font-black uppercase tracking-widest text-slate-400">
+          Sent by
+        </span>
 
-              <a class="btn btn-secondary" href="/index.html#create">
-                <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                <span>Create your own secret message</span>
-              </a>
-            </div>
-          </form>
+        <span
+          id="senderNameText"
+          class="ml-2 font-black"
+        ></span>
+      </div>
 
-          <div class="read-output hidden" id="readOutput">
-            <div class="read-output-head">
-              <div class="read-badge">
-                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-                <span>Below is the message 👇</span>
-              </div>
-            </div>
+      <div id="metaRow" class="mt-6 grid gap-3 sm:grid-cols-3">
 
-            <div class="message-panel">
-              <pre id="messageText"></pre>
-            </div>
+        <div class="rounded-2xl border border-slate-200 p-4 dark:border-white/10">
+          <p class="text-xs font-black uppercase tracking-widest text-slate-400">Expiry</p>
+          <p id="expiresAtText" class="mt-2 text-sm font-bold">—</p>
+        </div>
 
-            <p class="post-note">
-              The message has been marked as opened and will no longer be accessible.
-            </p>
+        <div class="rounded-2xl border border-slate-200 p-4 dark:border-white/10">
+          <p class="text-xs font-black uppercase tracking-widest text-slate-400">Protected</p>
+          <p id="passwordStateText" class="mt-2 text-sm font-bold">—</p>
+        </div>
 
-            <div class="opened-actions">
-              <a class="btn btn-secondary" href="/index.html#create">
-                <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                <span>Create your own secret message</span>
-              </a>
-            </div>
-          </div>
+        <div class="rounded-2xl border border-slate-200 p-4 dark:border-white/10">
+          <p class="text-xs font-black uppercase tracking-widest text-slate-400">Openings</p>
+          <p id="openingsText" class="mt-2 text-sm font-bold">—</p>
+        </div>
 
-          <div class="read-warning" id="readWarning">
-            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-            <p>
-              After successful opening, the note is burned. Use the password carefully if the sender enabled one.
-            </p>
+      </div>
+
+      <form id="readForm" class="mt-7">
+
+        <div id="passwordWrap" class="mb-5 hidden">
+          <label for="readPassword" class="mb-2 block text-sm font-bold">
+            Password
+          </label>
+
+          <div class="relative">
+            <i class="fa-solid fa-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+
+            <input
+              id="readPassword"
+              type="password"
+              placeholder="Enter the password"
+              class="w-full rounded-2xl border border-slate-200 bg-white py-4 pl-11 pr-12 outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 dark:border-white/10 dark:bg-white/5"
+            />
+
+            <button
+              id="readPasswordToggleBtn"
+              type="button"
+              class="absolute right-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-xl text-slate-400"
+              aria-label="Show password"
+            >
+              <i id="readPasswordToggleIcon" class="fa-regular fa-eye"></i>
+            </button>
           </div>
         </div>
-      </section>
 
-      <footer class="site-footer">
-        <p>Powered by <strong>Benfei Tech</strong></p>
-      </footer>
+        <button
+          id="readBtn"
+          type="submit"
+          class="w-full rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-emerald-500 px-6 py-4 font-extrabold text-white shadow-xl shadow-blue-500/20 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <i class="fa-solid fa-eye mr-2"></i>
+          <span>Open message</span>
+        </button>
 
-      <section class="follow-wrap">
-        <p class="follow-title">Follow our social handles</p>
+      </form>
 
-        <nav class="social-strip" aria-label="Follow our social handles">
-          <a href="https://www.youtube.com/@benfeitech" target="_blank" rel="noreferrer" aria-label="YouTube">
-            <i class="fa-brands fa-youtube" aria-hidden="true"></i>
-          </a>
-          <a href="https://whatsapp.com/channel/0029VbCwtVY65yDBVR9uhJ02" target="_blank" rel="noreferrer" aria-label="WhatsApp">
-            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-          </a>
-          <a href="https://t.me/benfeitech" target="_blank" rel="noreferrer" aria-label="Telegram">
-            <i class="fa-brands fa-telegram" aria-hidden="true"></i>
-          </a>
-          <a href="https://github.com/Benfeitech" target="_blank" rel="noreferrer" aria-label="GitHub">
-            <i class="fa-brands fa-github" aria-hidden="true"></i>
-          </a>
-          <a
-            href="https://www.linkedin.com/in/benfei-tech-ab6901304?utm_source=share_via&utm_content=profile&utm_medium=member_android"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="LinkedIn"
-          >
-            <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
-          </a>
-        </nav>
-      </section>
-    </main>
+      <!-- OUTPUT -->
+      <div id="readOutput" class="mt-8 hidden space-y-5">
 
-    <script src="assets/js/read.js"></script>
-  </body>
+        <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-circle-check text-xl text-emerald-500"></i>
+
+            <div>
+              <p class="font-black">Message opened successfully</p>
+              <p id="consumptionText" class="text-sm text-slate-500 dark:text-slate-400"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEXT -->
+        <div id="textContentWrap" class="hidden">
+          <div class="mb-2 flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-400">
+            <i class="fa-solid fa-message"></i>
+            Message
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 dark:border-white/10 dark:bg-white/[0.03] sm:p-7">
+            <pre
+              id="messageText"
+              class="whitespace-pre-wrap break-words font-sans text-base leading-8"
+            ></pre>
+          </div>
+        </div>
+
+        <!-- IMAGE -->
+        <div id="imageContentWrap" class="hidden">
+          <div class="mb-2 flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-400">
+            <i class="fa-regular fa-image"></i>
+            Image
+          </div>
+
+          <div class="overflow-hidden rounded-3xl border border-slate-200 bg-slate-950 dark:border-white/10">
+            <img
+              id="messageImage"
+              alt="Private Enc-Note image"
+              class="max-h-[70vh] w-full object-contain"
+              referrerpolicy="no-referrer"
+            />
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 p-4 text-sm leading-7 text-slate-500 dark:border-white/10 dark:text-slate-400">
+          <i class="fa-solid fa-shield-halved mr-2 text-emerald-500"></i>
+          This successful opening has consumed one access slot. Refreshing the page does not restore it.
+        </div>
+
+        <a
+          href="/create.html"
+          class="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 px-6 py-4 font-bold dark:border-white/10"
+        >
+          <i class="fa-solid fa-plus"></i>
+          Create your own secret note
+        </a>
+
+      </div>
+
+      <div
+        id="readWarning"
+        class="mt-7 rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-white/10 dark:bg-white/[0.03]"
+      >
+        <div class="flex gap-3">
+          <i class="fa-solid fa-shield-halved mt-1 text-slate-400"></i>
+
+          <p class="text-sm leading-7 text-slate-500 dark:text-slate-400">
+            A successful opening consumes one allowed opening. The note can also become unavailable automatically when its expiry time is reached.
+          </p>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="px-4 pb-8 text-center text-sm text-slate-500 dark:text-slate-400">
+    Powered by <strong class="text-slate-800 dark:text-white">Benfei Tech</strong>
+  </footer>
+
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/read.js"></script>
+</body>
 </html>
