@@ -178,29 +178,63 @@ async function requestUploadSignature() {
 }
 
 async function uploadImageToCloudinary(file) {
-  const signing = await requestUploadSignature();
+  const signing =
+    await requestUploadSignature();
 
-  const formData = new FormData();
+  const formData =
+    new FormData();
 
-  formData.append("file", file);
-  formData.append("api_key", signing.apiKey);
-  formData.append("timestamp", String(signing.timestamp));
-  formData.append("signature", signing.signature);
-  formData.append("public_id", signing.publicId);
-  formData.append("asset_folder", signing.assetFolder);
-  formData.append("type", signing.type);
+  formData.append(
+    "file",
+    file
+  );
+
+  formData.append(
+    "api_key",
+    signing.apiKey
+  );
+
+  formData.append(
+    "timestamp",
+    String(signing.timestamp)
+  );
+
+  formData.append(
+    "signature",
+    signing.signature
+  );
+
+  formData.append(
+    "public_id",
+    signing.publicId
+  );
+
+  formData.append(
+    "asset_folder",
+    signing.assetFolder
+  );
+
+  formData.append(
+    "type",
+    signing.type
+  );
 
   const uploadUrl =
     `https://api.cloudinary.com/v1_1/${encodeURIComponent(
       signing.cloudName
     )}/image/upload`;
 
-  const response = await fetch(uploadUrl, {
-    method: "POST",
-    body: formData
-  });
+  const response =
+    await fetch(
+      uploadUrl,
+      {
+        method: "POST",
+        body: formData
+      }
+    );
 
-  const data = await response.json();
+  const data =
+    await response.json();
 
   if (!response.ok) {
     throw new Error(
@@ -210,15 +244,25 @@ async function uploadImageToCloudinary(file) {
   }
 
   return {
-    publicId: data.public_id,
-    assetId: data.asset_id || null,
-    format: data.format,
-    bytes: data.bytes,
-    width: data.width,
-    height: data.height
+    publicId:
+      data.public_id,
+
+    assetId:
+      data.asset_id || null,
+
+    format:
+      data.format,
+
+    bytes:
+      data.bytes,
+
+    width:
+      data.width,
+
+    height:
+      data.height
   };
 }
-
 function setSubmitting(isSubmitting, label = "Create secure link") {
   submitBtn.disabled = isSubmitting;
 
