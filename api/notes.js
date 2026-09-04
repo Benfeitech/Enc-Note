@@ -211,9 +211,11 @@ function normalizeMaxOpens(value) {
   return count;
 }
 
-function normalizeImageMeta(
-  image
-) {
+
+
+
+
+        function normalizeImageMeta(image) {
   if (
     !image ||
     typeof image !== "object"
@@ -232,19 +234,11 @@ function normalizeImageMeta(
     );
   }
 
-  /*
-   * IMPORTANT:
-   * Cloudinary uploads are stored inside
-   * the enc-note folder, and the generated
-   * public ID must begin with note-.
-   */
+  // Cloudinary public_id is "note-xxxxx".
+  // The asset belongs to the Enc-Note folder separately.
   if (
-    !publicId.startsWith(
-      "enc-note/"
-    ) ||
-    !publicId
-      .slice("enc-note/".length)
-      .startsWith("note-")
+    !publicId.startsWith("note-") ||
+    publicId.length < 10
   ) {
     throw new Error(
       "Invalid image asset"
@@ -259,9 +253,7 @@ function normalizeImageMeta(
       .trim();
 
   if (
-    !ALLOWED_IMAGE_FORMATS.has(
-      format
-    )
+    !ALLOWED_IMAGE_FORMATS.has(format)
   ) {
     throw new Error(
       "Unsupported image format"
@@ -336,6 +328,8 @@ function normalizeImageMeta(
   };
 }
 
+
+
 async function validateCloudinaryImage(
   image
 ) {
@@ -375,14 +369,13 @@ async function validateCloudinaryImage(
   }
 
   if (
-    !resource.public_id.startsWith(
-      "enc-note/note-"
-    )
-  ) {
-    throw new Error(
-      "Invalid Enc-Note image asset"
-    );
-  }
+  !resource.public_id.startsWith("note-") ||
+  resource.asset_folder !== "enc-note"
+) {
+  throw new Error(
+    "Invalid Enc-Note image asset"
+  );
+}
 
   if (
     Number(resource.bytes || 0) >
