@@ -463,28 +463,47 @@ form.addEventListener("submit", async (event) => {
     }
 
     const response =
-      await fetch("/api/notes", {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-        body: JSON.stringify({
-          senderName,
-          message,
-          password:
-            passwordEnabled
-              ? password
-              : "",
-          durationMinutes,
-          maxOpens,
-          image:
-            imagePayload
-        })
-      });
+  await fetch("/api/notes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({
+      senderName,
+      message,
+      password: passwordEnabled ? password : "",
+      durationMinutes,
+      maxOpens,
+      image: imagePayload
+    })
+  });
 
-    const data =
-      await response.json();
+const rawResponse = await response.text();
+
+let data;
+
+try {
+  data = rawResponse
+    ? JSON.parse(rawResponse)
+    : {};
+} catch {
+  console.error(
+    "Non-JSON response from /api/notes:",
+    rawResponse
+  );
+
+  throw new Error(
+    `Server returned an invalid response (${response.status}).`
+  );
+}
+
+if (!response.ok) {
+  throw new Error(
+    data?.error ||
+    `Server error (${response.status})`
+  );
+}
 
     if (!response.ok) {
       throw new Error(
