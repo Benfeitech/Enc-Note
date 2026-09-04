@@ -1,59 +1,80 @@
-const root = document.documentElement;
-const themeToggle = document.getElementById("themeToggle");
-const themeIcon = document.getElementById("themeIcon");
-
 const form = document.getElementById("createNoteForm");
+
 const senderNameEl = document.getElementById("senderName");
 const messageEl = document.getElementById("message");
+const charCountEl = document.getElementById("charCount");
+
+const imageInput = document.getElementById("imageInput");
+const imagePreviewWrap = document.getElementById("imagePreviewWrap");
+const imagePreview = document.getElementById("imagePreview");
+const imageFileName = document.getElementById("imageFileName");
+const imageFileMeta = document.getElementById("imageFileMeta");
+const removeImageBtn = document.getElementById("removeImageBtn");
+
 const expiresInEl = document.getElementById("expiresIn");
+const maxOpensEl = document.getElementById("maxOpens");
+
 const passwordOptionEl = document.getElementById("passwordOption");
-const passwordWrapEl = document.getElementById("passwordFieldWrap");
+const passwordFieldWrap = document.getElementById("passwordFieldWrap");
 const passwordEl = document.getElementById("password");
 const passwordToggleBtn = document.getElementById("passwordToggleBtn");
 const passwordToggleIcon = document.getElementById("passwordToggleIcon");
-const charCountEl = document.getElementById("charCount");
+
 const submitBtn = document.getElementById("submitBtn");
 const resetBtn = document.getElementById("resetBtn");
+
 const resultEmpty = document.getElementById("resultEmpty");
 const resultSuccess = document.getElementById("resultSuccess");
 const generatedLinkEl = document.getElementById("generatedLink");
+const statusLinkEl = document.getElementById("statusLink");
+const resultSummaryEl = document.getElementById("resultSummary");
+
 const copyLinkBtn = document.getElementById("copyLinkBtn");
 const openLinkBtn = document.getElementById("openLinkBtn");
 
-const THEME_KEY = "encnote-theme";
+const copyStatusBtn = document.getElementById("copyStatusBtn");
+const openStatusBtn = document.getElementById("openStatusBtn");
+
+let selectedImage = null;
+let uploadedImage = null;
 let currentGeneratedLink = "";
+let currentStatusLink = "";
 
-const toast = Swal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 2800,
-  timerProgressBar: true,
-  background: "var(--surface-strong)",
-  color: "var(--text)"
-});
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
-function applyTheme(theme) {
-  root.setAttribute("data-theme", theme);
-  const isDark = theme === "dark";
-  themeIcon.className = isDark
-    ? "fa-solid fa-sun theme-toggle-icon"
-    : "fa-solid fa-moon theme-toggle-icon";
-  themeToggle.setAttribute(
-    "aria-label",
-    isDark ? "Switch to light mode" : "Switch to dark mode"
-  );
+const expiryMap = {
+  "5m": 5,
+  "15m": 15,
+  "1h": 60,
+  "6h": 360,
+  "24h": 1440
+};
+
+const toast = typeof Swal !== "undefined"
+  ? Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 2800,
+      timerProgressBar: true,
+      background: "#0f172a",
+      color: "#fff"
+    })
+  : null;
+
+function notify(icon, title) {
+  if (toast) {
+    toast.fire({ icon, title });
+  }
 }
 
-function initTheme() {
-  const savedTheme = localStorage.getItem(THEME_KEY);
-  if (savedTheme === "dark" || savedTheme === "light") {
-    applyTheme(savedTheme);
-    return;
+function formatBytes(bytes) {
+  if (!Number.isFinite(bytes)) return "Unknown size";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
   }
-
-  const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
-  applyTheme(prefersDark ? "dark" : "light");
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
 function updateCount() {
@@ -62,7 +83,8 @@ function updateCount() {
 
 function togglePasswordField() {
   const enabled = passwordOptionEl.checked;
-  passwordWrapEl.classList.toggle("hidden", !enabled);
+
+  passwordFieldWrap.classList.toggle("hidden", !enabled);
 
   if (!enabled) {
     passwordEl.value = "";
@@ -73,147 +95,428 @@ function togglePasswordField() {
 }
 
 function togglePasswordVisibility() {
-  const isHidden = passwordEl.type === "password";
-  passwordEl.type = isHidden ? "text" : "password";
-  passwordToggleIcon.className = isHidden ? "fa-regular fa-eye-slash" : "fa-regular fa-eye";
-  passwordToggleBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+  const hidden = passwordEl.type === "password";
+
+  passwordEl.type = hidden ? "text" : "password";
+  passwordToggleIcon.className = hidden
+    ? "fa-regular fa-eye-slash"
+    : "fa-regular fa-eye";
+
+  passwordToggleBtn.setAttribute(
+    "aria-label",
+    hidden ? "Hide password" : "Show password"
+  );
 }
 
-function showResult(link) {
-  currentGeneratedLink = link;
-  generatedLinkEl.textContent = link;
+function clearSelectedImage() {
+  selectedImage = null;
+  uploadedImage = null;
+
+  imageInput.value = "";
+  imagePreview.removeAttribute("src");
+  imagePreviewWrap.classList.add("hidden");
+  imageFileName.textContent = "";
+  imageFileMeta.textContent = "";
+}
+
+function showSelectedImage(file) {
+  selectedImage = file;
+  uploadedImage = null;
+
+  const url = URL.createObjectURL(file);
+
+  imagePreview.src = url;
+  imagePreviewWrap.classList.remove("hidden");
+
+  imageFileName.textContent = file.name;
+
+  imageFileMeta.textContent =
+    `${file.type || "Image"} · ${formatBytes(file.size)}`;
+}
+
+function validateImage(file) {
+  if (!file) {
+    return "No image selected";
+  }
+
+  const supported = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif"
+  ];
+
+  if (!supported.includes(file.type)) {
+    return "Use JPEG, PNG, WebP or GIF";
+  }
+
+  if (file.size > MAX_IMAGE_BYTES) {
+    return "Image must be 5 MB or smaller";
+  }
+
+  return null;
+}
+
+async function requestUploadSignature() {
+  const response = await fetch("/api/cloudinary-sign", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({})
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error || "Could not prepare image upload"
+    );
+  }
+
+  return data;
+}
+
+async function uploadImageToCloudinary(file) {
+  const signing = await requestUploadSignature();
+
+  const formData = new FormData();
+
+  formData.append("file", file);
+  formData.append("api_key", signing.apiKey);
+  formData.append("timestamp", String(signing.timestamp));
+  formData.append("signature", signing.signature);
+  formData.append("public_id", signing.publicId);
+  formData.append("asset_folder", signing.assetFolder);
+  formData.append("type", signing.type);
+
+  const uploadUrl =
+    `https://api.cloudinary.com/v1_1/${encodeURIComponent(
+      signing.cloudName
+    )}/image/upload`;
+
+  const response = await fetch(uploadUrl, {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error?.message ||
+      "Image upload failed"
+    );
+  }
+
+  return {
+    publicId: data.public_id,
+    assetId: data.asset_id || null,
+    format: data.format,
+    bytes: data.bytes,
+    width: data.width,
+    height: data.height
+  };
+}
+
+function setSubmitting(isSubmitting, label = "Create secure link") {
+  submitBtn.disabled = isSubmitting;
+
+  submitBtn.innerHTML = isSubmitting
+    ? `
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      <span>${label}</span>
+    `
+    : `
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+      <span>${label}</span>
+    `;
+}
+
+function showResult(data) {
+  currentGeneratedLink = data.link;
+  currentStatusLink = data.statusLink;
+
+  generatedLinkEl.textContent = data.link;
+  statusLinkEl.textContent = data.statusLink;
+
+  resultSummaryEl.textContent =
+    `${data.openCount} / ${data.maxOpens} opens used · ` +
+    `Expires ${new Date(data.expiresAt).toLocaleString()}`;
+
   resultEmpty.classList.add("hidden");
   resultSuccess.classList.remove("hidden");
 }
 
 function resetResult() {
   currentGeneratedLink = "";
+  currentStatusLink = "";
+
   generatedLinkEl.textContent = "";
-  resultEmpty.classList.remove("hidden");
+  statusLinkEl.textContent = "";
+  resultSummaryEl.textContent = "";
+
   resultSuccess.classList.add("hidden");
+  resultEmpty.classList.remove("hidden");
 }
 
-function getExpiryMinutes(value) {
-  const map = {
-    "5m": 5,
-    "15m": 15,
-    "1h": 60,
-    "6h": 360,
-    "24h": 1440
-  };
-  return map[value] ?? 60;
-}
-
-themeToggle.addEventListener("click", () => {
-  const currentTheme = root.getAttribute("data-theme") || "light";
-  const nextTheme = currentTheme === "light" ? "dark" : "light";
-  localStorage.setItem(THEME_KEY, nextTheme);
-  applyTheme(nextTheme);
-});
-
-passwordOptionEl.addEventListener("change", togglePasswordField);
-passwordToggleBtn.addEventListener("click", togglePasswordVisibility);
-messageEl.addEventListener("input", updateCount);
-
-resetBtn.addEventListener("click", () => {
+function resetForm() {
   form.reset();
-  if (senderNameEl) senderNameEl.value = "";
+
+  clearSelectedImage();
+
   togglePasswordField();
   updateCount();
   resetResult();
-  toast.fire({ icon: "info", title: "Form reset" });
-});
+}
 
-copyLinkBtn.addEventListener("click", async () => {
-  if (!currentGeneratedLink) return;
+async function copyText(text, successTitle) {
+  if (!text) return;
 
   try {
-    await navigator.clipboard.writeText(currentGeneratedLink);
-    toast.fire({ icon: "success", title: "Link copied" });
+    await navigator.clipboard.writeText(text);
+    notify("success", successTitle);
   } catch {
-    toast.fire({ icon: "error", title: "Could not copy link" });
+    notify("error", "Could not copy");
   }
+}
+
+imageInput.addEventListener("change", () => {
+  const file = imageInput.files?.[0];
+
+  if (!file) {
+    clearSelectedImage();
+    return;
+  }
+
+  const error = validateImage(file);
+
+  if (error) {
+    clearSelectedImage();
+    notify("error", error);
+    return;
+  }
+
+  showSelectedImage(file);
 });
 
-openLinkBtn.addEventListener("click", () => {
-  if (!currentGeneratedLink) return;
-  window.open(currentGeneratedLink, "_blank", "noopener,noreferrer");
-});
+removeImageBtn.addEventListener(
+  "click",
+  clearSelectedImage
+);
+
+messageEl.addEventListener(
+  "input",
+  updateCount
+);
+
+passwordOptionEl.addEventListener(
+  "change",
+  togglePasswordField
+);
+
+passwordToggleBtn.addEventListener(
+  "click",
+  togglePasswordVisibility
+);
+
+resetBtn.addEventListener(
+  "click",
+  () => {
+    resetForm();
+    notify("info", "Form reset");
+  }
+);
+
+copyLinkBtn.addEventListener(
+  "click",
+  () => copyText(
+    currentGeneratedLink,
+    "Recipient link copied"
+  )
+);
+
+copyStatusBtn.addEventListener(
+  "click",
+  () => copyText(
+    currentStatusLink,
+    "Status link copied"
+  )
+);
+
+openLinkBtn.addEventListener(
+  "click",
+  () => {
+    if (!currentGeneratedLink) return;
+
+    window.open(
+      currentGeneratedLink,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+);
+
+openStatusBtn.addEventListener(
+  "click",
+  () => {
+    if (!currentStatusLink) return;
+
+    window.open(
+      currentStatusLink,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+);
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const senderName = senderNameEl ? senderNameEl.value.trim() : "";
-  const message = messageEl.value.trim();
-  const expiresIn = expiresInEl.value;
-  const passwordEnabled = passwordOptionEl.checked;
-  const password = passwordEl.value.trim();
+  const message =
+    messageEl.value.trim();
 
-  if (!message) {
-    toast.fire({ icon: "warning", title: "Write a secret message first" });
+  const senderName =
+    senderNameEl.value.trim();
+
+  const passwordEnabled =
+    passwordOptionEl.checked;
+
+  const password =
+    passwordEl.value;
+
+  if (!message && !selectedImage) {
+    notify(
+      "warning",
+      "Add a message or an image"
+    );
+
     messageEl.focus();
     return;
   }
 
-  if (message.length < 5) {
-    toast.fire({ icon: "warning", title: "Message is too short" });
+  if (message.length > 5000) {
+    notify(
+      "warning",
+      "Message is too long"
+    );
+
     messageEl.focus();
     return;
   }
 
-  if (passwordEnabled && password.length < 4) {
-    toast.fire({ icon: "warning", title: "Password must be at least 4 characters" });
+  if (
+    passwordEnabled &&
+    password.trim().length < 4
+  ) {
+    notify(
+      "warning",
+      "Password must be at least 4 characters"
+    );
+
     passwordEl.focus();
     return;
   }
 
-  const durationMinutes = getExpiryMinutes(expiresIn);
+  const durationMinutes =
+    expiryMap[expiresInEl.value] ?? 60;
 
-  submitBtn.disabled = true;
-  submitBtn.innerHTML =
-    '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><span>Creating...</span>';
+  const maxOpens =
+    Number(maxOpensEl.value);
+
+  if (
+    !Number.isInteger(maxOpens) ||
+    maxOpens < 1 ||
+    maxOpens > 100
+  ) {
+    notify(
+      "error",
+      "Invalid opening limit"
+    );
+
+    return;
+  }
+
+  setSubmitting(
+    true,
+    selectedImage
+      ? "Uploading image..."
+      : "Creating..."
+  );
 
   try {
-    const response = await fetch("/api/notes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        senderName,
-        message,
-        password: passwordEnabled ? password : "",
-        expiresIn,
-        durationMinutes
-      })
-    });
+    let imagePayload = null;
 
-    const data = await response.json();
+    if (selectedImage) {
+      imagePayload =
+        await uploadImageToCloudinary(
+          selectedImage
+        );
 
-    if (!response.ok) {
-      throw new Error(data?.error || "Failed to create note");
+      uploadedImage =
+        imagePayload;
+
+      setSubmitting(
+        true,
+        "Creating secure link..."
+      );
     }
 
-    const link = data.link || `${window.location.origin}/read.html?slug=${data.slug}`;
-    showResult(link);
+    const response =
+      await fetch("/api/notes", {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+        body: JSON.stringify({
+          senderName,
+          message,
+          password:
+            passwordEnabled
+              ? password
+              : "",
+          durationMinutes,
+          maxOpens,
+          image:
+            imagePayload
+        })
+      });
 
-    toast.fire({ icon: "success", title: "Secret link created" });
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data?.error ||
+        "Failed to create note"
+      );
+    }
+
+    showResult(data);
+
+    notify(
+      "success",
+      "Secret note created"
+    );
 
     form.reset();
-    if (senderNameEl) senderNameEl.value = "";
+
+    clearSelectedImage();
     togglePasswordField();
     updateCount();
+
   } catch (error) {
-    toast.fire({
-      icon: "error",
-      title: error.message || "Something went wrong"
-    });
+    notify(
+      "error",
+      error?.message ||
+      "Something went wrong"
+    );
   } finally {
-    submitBtn.disabled = false;
-    submitBtn.innerHTML =
-      '<i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i><span>Create secure link</span>';
+    setSubmitting(false);
   }
 });
 
-initTheme();
-togglePasswordField();
 updateCount();
+togglePasswordField();
 resetResult();
