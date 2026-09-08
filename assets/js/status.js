@@ -296,6 +296,38 @@ function renderStatus(data) {
   statusContent.classList.remove(
     "hidden"
   );
+
+  if (data.status === "unopened") {
+  notify(
+    "info",
+    "Note hasn't been opened yet",
+    `${data.maxOpens} opening${data.maxOpens === 1 ? "" : "s"} available.`
+  );
+}
+
+if (data.status === "opened") {
+  notify(
+    "success",
+    "Your note has been opened",
+    `${data.openCount} of ${data.maxOpens} openings have been used.`
+  );
+}
+
+if (data.status === "consumed") {
+  notify(
+    "success",
+    "Note fully consumed",
+    `All ${data.maxOpens} allowed openings have been used.`
+  );
+}
+
+if (data.status === "expired") {
+  notify(
+    "warning",
+    "Note expired",
+    "The note is no longer available."
+  );
+}
 }
 
 function showError(title, message) {
